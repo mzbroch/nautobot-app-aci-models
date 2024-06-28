@@ -3,7 +3,8 @@
 from django.db import models
 
 from nautobot.apps.models import PrimaryModel
-from nautobot.core.constants import CHARFIELD_MAX_LENGTH
+
+from .constants import CHARFIELD_MAX_LENGTH
 
 
 class ApplicationProfile(PrimaryModel):
