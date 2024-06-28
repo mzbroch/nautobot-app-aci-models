@@ -1,0 +1,26 @@
+{
+    "cookiecutter": {
+        "codeowner_github_usernames": "mzbroch",
+        "full_name": "Network to Code, LLC",
+        "email": "info@networktocode.com",
+        "github_org": "nautobot",
+        "app_name": "aci_models",
+        "verbose_name": "Cisco ACI Models",
+        "app_slug": "aci-models",
+        "project_slug": "nautobot-app-aci-models",
+        "repo_url": "https://github.com/nautobot/nautobot-app-aci-models",
+        "base_url": "aci-models",
+        "min_nautobot_version": "2.0.0",
+        "max_nautobot_version": "2.9999",
+        "camel_name": "AciModels",
+        "project_short_description": "Cisco ACI Models",
+        "model_class_name": "ACIModel",
+        "open_source_license": "Apache-2.0",
+        "docs_base_url": "https://docs.nautobot.com",
+        "docs_app_url": "https://docs.nautobot.com/projects/aci-models/en/latest",
+        "_template": "https://github.com/nautobot/cookiecutter-nautobot-app",
+        "_output_dir": "/opt/src/cookiecutter-nautobot-app/outputs",
+        "_repo_dir": "/root/.cookiecutters/cookiecutter-nautobot-app/nautobot-app",
+        "_checkout": null
+    }
+}
