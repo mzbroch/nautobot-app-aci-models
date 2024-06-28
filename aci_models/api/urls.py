@@ -6,9 +6,9 @@ from aci_models.api import views
 
 router = OrderedDefaultRouter()
 
-router.register("application-profile", views.ApplicationProfileViewSet)
-router.register("bridge-domain", views.BridgeDomainViewSet)
-router.register("epg", views.EPGViewSet)
-router.register("application-termination", views.ApplicationTerminationViewSet)
+router.register("application-profiles", views.ApplicationProfileViewSet)
+router.register("bridge-domains", views.BridgeDomainViewSet)
+router.register("epgs", views.EPGViewSet)
+router.register("application-terminations", views.ApplicationTerminationViewSet)
 
 urlpatterns = router.urls

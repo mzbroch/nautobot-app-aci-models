@@ -1,12 +1,17 @@
 """Forms for aci_models."""
 from django import forms
-from nautobot.apps.forms import NautobotBulkEditForm, NautobotFilterForm, NautobotModelForm, TagsBulkEditFormMixin
+from nautobot.apps.forms import NautobotBulkEditForm, NautobotFilterForm, NautobotModelForm, TagsBulkEditFormMixin, DynamicModelChoiceField, DynamicModelMultipleChoiceField
+from nautobot.tenancy.models import Tenant
+from nautobot.ipam.models import VRF
+from nautobot.ipam.models import IPAddress
 
 from aci_models import models
 
 
 class ApplicationProfileForm(NautobotModelForm):  # pylint: disable=too-many-ancestors
-    """ApplicatinonProfile creation/edit form."""
+    """ApplicationProfile creation/edit form."""
+
+    tenant = DynamicModelChoiceField(queryset=Tenant.objects.all(), required=True)
 
     class Meta:
         """Meta attributes."""
@@ -14,6 +19,7 @@ class ApplicationProfileForm(NautobotModelForm):  # pylint: disable=too-many-anc
         model = models.ApplicationProfile
         fields = [
             "name",
+            "tenant",
             "description",
         ]
 
@@ -47,7 +53,19 @@ class ApplicationProfileFilterForm(NautobotFilterForm):
 
 
 class BridgeDomainForm(NautobotModelForm):  # pylint: disable=too-many-ancestors
-    """ACIModel creation/edit form."""
+    """BridgeDomain creation/edit form."""
+
+    tenant = DynamicModelChoiceField(queryset=Tenant.objects.all(), required=True)
+    vrf = DynamicModelChoiceField(
+        queryset=VRF.objects.all(),
+        label="VRF",
+        required=True,
+    )
+    ip_addresses = DynamicModelMultipleChoiceField(
+        queryset=IPAddress.objects.all(),
+        required=False,
+        label="IP Addresses",
+    )
 
     class Meta:
         """Meta attributes."""
@@ -55,6 +73,9 @@ class BridgeDomainForm(NautobotModelForm):  # pylint: disable=too-many-ancestors
         model = models.BridgeDomain
         fields = [
             "name",
+            "tenant",
+            "vrf",
+            "ip_addresses",
             "description",
         ]
 
@@ -85,6 +106,7 @@ class BridgeDomainFilterForm(NautobotFilterForm):
         help_text="Search within Name or Slug.",
     )
     name = forms.CharField(required=False, label="Name")
+
 
 class EPGForm(NautobotModelForm):  # pylint: disable=too-many-ancestors
     """EPG creation/edit form."""

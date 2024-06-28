@@ -5,9 +5,9 @@ from nautobot.apps.urls import NautobotUIViewSetRouter
 from aci_models import views
 
 router = NautobotUIViewSetRouter()
-router.register("application-profile", views.ApplicationProfileUIViewSet)
-router.register("bridge-domain", views.BridgeDomainUIViewSet)
-router.register("epg", views.EPGUIViewSet)
-router.register("application-termination", views.ApplicationTerminationUIViewSet)
+router.register("application-profiles", views.ApplicationProfileUIViewSet)
+router.register("bridge-domains", views.BridgeDomainUIViewSet)
+router.register("epgs", views.EPGUIViewSet)
+router.register("application-terminations", views.ApplicationTerminationUIViewSet)
 
 urlpatterns = router.urls

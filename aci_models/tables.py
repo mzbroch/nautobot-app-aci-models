@@ -3,6 +3,8 @@
 import django_tables2 as tables
 from nautobot.apps.tables import BaseTable, ButtonsColumn, ToggleColumn
 
+from nautobot.tenancy.tables import TenantColumn
+
 from aci_models import models
 
 
@@ -12,6 +14,7 @@ class ApplicationProfileTable(BaseTable):
 
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
+    tenant = TenantColumn()
     actions = ButtonsColumn(
         models.ApplicationProfile,
         # Option for modifying the default action buttons on each row:
@@ -27,6 +30,7 @@ class ApplicationProfileTable(BaseTable):
         fields = (
             "pk",
             "name",
+            "tenant",
             "description",
         )
 
