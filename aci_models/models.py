@@ -6,13 +6,13 @@ from nautobot.apps.models import PrimaryModel
 
 from .constants import CHARFIELD_MAX_LENGTH
 
-
+# CURRRENTLY NAMED: ACIAppProfile
 class ApplicationProfile(PrimaryModel):
     """Represents Cisco ACI Application Profile."""
     name = models.CharField(max_length=CHARFIELD_MAX_LENGTH)
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
-        on_delete=models.PROTECT,
+        on_delete=models.PROTECT, # Which side of the relationship is protected?
         related_name="aci_appprofiles",
     )
     description = models.CharField(max_length=CHARFIELD_MAX_LENGTH, blank=True)
@@ -28,19 +28,19 @@ class ApplicationProfile(PrimaryModel):
         """Return a string representation of the instance."""
         return self.name
 
-
+# CURRRENTLY NAMED: ACIBridgeDomain
 class BridgeDomain(PrimaryModel):
     """Represents Cisco ACI Bridge Domain."""
     name = models.CharField(max_length=CHARFIELD_MAX_LENGTH)
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
-        on_delete=models.PROTECT,
+        on_delete=models.PROTECT, # Which side of the relationship is protected?
         related_name="aci_bridgedomains",
     )
     vrf = models.ForeignKey(
         to="ipam.VRF",
         related_name="aci_bridgedomains",
-        on_delete=models.PROTECT,
+        on_delete=models.PROTECT, # Which side of the relationship is protected?
     )
     description = models.CharField(max_length=CHARFIELD_MAX_LENGTH, blank=True)
     ip_addresses = models.ManyToManyField(
@@ -61,22 +61,22 @@ class BridgeDomain(PrimaryModel):
         """Return a string representation of the instance."""
         return self.name
 
-
+# CURRRENTLY NAMED: ACIEPG
 class EPG(PrimaryModel):
     """Represents Cisco ACI EPG."""
     name = models.CharField(max_length=CHARFIELD_MAX_LENGTH)
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
-        on_delete=models.PROTECT,
+        on_delete=models.PROTECT, # Which side of the relationship is protected?
         related_name="aci_epgs",
     )
     application = models.ForeignKey(
-        ApplicationProfile,
+        ApplicationProfile, # CURRRENTLY NAMED: ACIAppProfile
         related_name="aci_epgs",
-        on_delete=models.CASCADE,
+        on_delete=models.CASCADE, 
     )
     bridge_domain = models.ForeignKey(
-        BridgeDomain,
+        BridgeDomain, # CURRRENTLY NAMED: ACIBridgeDomain
         related_name="aci_epgs",
         on_delete=models.CASCADE,
     )
@@ -93,22 +93,22 @@ class EPG(PrimaryModel):
         """Return a string representation of the instance."""
         return self.name
 
-
+# CURRRENTLY NAMED: ACIAppTermination
 class ApplicationTermination(PrimaryModel):
     """Represents Cisco ACI Application Terminations."""
     epg = models.ForeignKey(
         EPG,
-        related_name="aci_apptermination",
+        related_name="aci_apptermination", # EPGs can have multiple terminations, maybe aci_appterminations?
         on_delete=models.CASCADE,
     )
     interface = models.ForeignKey(
         to="dcim.Interface",
-        related_name="aci_apptermination",
+        related_name="aci_apptermination", # IF can have multiple terminations, maybe aci_appterminations?
         on_delete=models.CASCADE,
     )
     vlan = models.ForeignKey(
         to="ipam.VLAN",
-        related_name="aci_apptermination",
+        related_name="aci_apptermination", # VLANS can have multiple terminations, maybe aci_appterminations?
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
