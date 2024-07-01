@@ -2,8 +2,10 @@
 from django import forms
 from nautobot.apps.forms import NautobotBulkEditForm, NautobotFilterForm, NautobotModelForm, TagsBulkEditFormMixin, DynamicModelChoiceField, DynamicModelMultipleChoiceField
 from nautobot.tenancy.models import Tenant
+from nautobot.dcim.models import Device, Interface
 from nautobot.ipam.models import VRF
 from nautobot.ipam.models import IPAddress
+from nautobot.ipam.models import VLAN
 
 from aci_models import models
 
@@ -111,12 +113,19 @@ class BridgeDomainFilterForm(NautobotFilterForm):
 class EPGForm(NautobotModelForm):  # pylint: disable=too-many-ancestors
     """EPG creation/edit form."""
 
+    tenant = DynamicModelChoiceField(queryset=Tenant.objects.all(), required=True)
+    application = DynamicModelChoiceField(queryset=models.ApplicationProfile.objects.all(), required=True)
+    bridge_domain = DynamicModelChoiceField(queryset=models.BridgeDomain.objects.all(), required=True)
+
     class Meta:
         """Meta attributes."""
 
         model = models.EPG
         fields = [
             "name",
+            "tenant",
+            "application",
+            "bridge_domain",
             "description",
         ]
 
@@ -152,14 +161,42 @@ class EPGFilterForm(NautobotFilterForm):
 class ApplicationTerminationForm(NautobotModelForm):  # pylint: disable=too-many-ancestors
     """ACIModel creation/edit form."""
 
+    epg = DynamicModelChoiceField(queryset=models.EPG.objects.all(), required=True)
+    device = DynamicModelChoiceField(
+        queryset=Device.objects.all(),
+        required=False,
+    )
+    interface = DynamicModelChoiceField(
+        queryset=Interface.objects.all(),
+        query_params={"device_id": "$device"},
+        help_text="Choose an interface to add to the Application Termination.",
+    )
+    vlan = DynamicModelChoiceField(
+        queryset=VLAN.objects.all(),
+        required=False,
+        label="VLAN",
+        # query_params={
+        #     "locations": "$locations",
+        #     "vlan_group": "$vlan_group",
+        # },
+    )
     class Meta:
         """Meta attributes."""
 
         model = models.ApplicationTermination
         fields = [
             "name",
+            "epg",
+            "device",
+            "interface",
+            "vlan",
             "description",
         ]
+
+    def clean(self):
+        pass
+        # uniquness: interface and volan
+        # how to check if vlan is onsite / same DC etc.
 
 
 class ApplicationTerminationBulkEditForm(TagsBulkEditFormMixin, NautobotBulkEditForm):  # pylint: disable=too-many-ancestors

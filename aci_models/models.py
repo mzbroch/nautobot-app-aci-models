@@ -106,6 +106,10 @@ class ApplicationTermination(PrimaryModel):
         related_name="aci_apptermination",
         on_delete=models.CASCADE,
     )
+    @property
+    def device(self):
+        return self.interface.device if self.interface else None
+
     vlan = models.ForeignKey(
         to="ipam.VLAN",
         related_name="aci_apptermination",

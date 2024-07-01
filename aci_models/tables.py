@@ -7,6 +7,11 @@ from nautobot.tenancy.tables import TenantColumn
 
 from aci_models import models
 
+APPTERM_LINK = """
+<a href="{% url 'plugins:aci_models:applicationtermination' pk=record.pk %}">
+    {{ record.name|default:'<span class="label label-info">Unnamed EPG</span>' }}
+</a>
+"""
 
 class ApplicationProfileTable(BaseTable):
     # pylint: disable=R0903
@@ -41,12 +46,15 @@ class ApplicationProfileTable(BaseTable):
         #     "description",
         # )
 
+
 class BridgeDomainTable(BaseTable):
     # pylint: disable=R0903
     """Table for BridgeDomain list view."""
 
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
+    tenant = TenantColumn()
+    vrf = tables.Column(verbose_name="VRF", linkify=lambda record: record.vrf.get_absolute_url(), accessor="vrf.name")
     actions = ButtonsColumn(
         models.BridgeDomain,
         # Option for modifying the default action buttons on each row:
@@ -62,7 +70,11 @@ class BridgeDomainTable(BaseTable):
         fields = (
             "pk",
             "name",
+            "tenant",
+            "vrf",
+            "ip_addresses",
             "description",
+
         )
 
         # Option for modifying the columns that show up in the list view by default:
@@ -72,12 +84,16 @@ class BridgeDomainTable(BaseTable):
         #     "description",
         # )
 
+
 class EPGTable(BaseTable):
     # pylint: disable=R0903
     """Table for EPG list view."""
 
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
+    tenant = TenantColumn()
+    application = tables.Column(linkify=True)
+    bridge_domain = tables.Column(linkify=True)
     actions = ButtonsColumn(
         models.EPG,
         # Option for modifying the default action buttons on each row:
@@ -93,6 +109,9 @@ class EPGTable(BaseTable):
         fields = (
             "pk",
             "name",
+            "tenant",
+            "application",
+            "bridge_domain",
             "description",
         )
 
@@ -103,12 +122,17 @@ class EPGTable(BaseTable):
         #     "description",
         # )
 
+
 class ApplicationTerminationTable(BaseTable):
     # pylint: disable=R0903
     """Table for ApplicationTermination list view."""
 
     pk = ToggleColumn()
-    name = tables.Column(linkify=True)
+    name = tables.TemplateColumn(template_code=APPTERM_LINK)
+    epg = tables.Column(verbose_name="EPG", linkify=True)
+    device = tables.Column(linkify=True)
+    interface = tables.Column(linkify=True)
+    vlan = tables.Column(verbose_name="VLAN", linkify=True)
     actions = ButtonsColumn(
         models.ApplicationTermination,
         # Option for modifying the default action buttons on each row:
@@ -124,6 +148,10 @@ class ApplicationTerminationTable(BaseTable):
         fields = (
             "pk",
             "name",
+            "epg",
+            "device",
+            "interface",
+            "vlan",
             "description",
         )
 
