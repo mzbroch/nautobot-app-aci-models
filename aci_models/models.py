@@ -126,13 +126,17 @@ class ApplicationTermination(PrimaryModel):
         blank=True,
     )
 
-    def __str__(self):
-        """Return a string representation of the instance."""
-        return f"{self.interface.device.name}:{self.interface.name}:{self.vlan.vid}"
-
     class Meta:
         """Meta class for ApplicationTermination."""
         verbose_name = "Cisco ACI App Termination"
         verbose_name_plural = "Cisco ACI App Termination"
         ordering = ("name",)
         unique_together = ("epg", "interface", "vlan")
+
+    def __str__(self):
+        """Return a string representation of the instance."""
+        return f"{self.interface.device.name}:{self.interface.name}:{self.vlan.vid}"
+
+    def clean(self):
+        pass
+        # vlan should be restricted to location (+child) of the device .

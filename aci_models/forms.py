@@ -44,7 +44,14 @@ class ApplicationProfileFilterForm(NautobotFilterForm):
     """Filter form to filter searches."""
 
     model = models.ApplicationProfile
-    field_order = ["q", "name"]
+    tenant = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        null_option="None",
+    )
+
+    field_order = ["q", "name", "tenant"]
 
     q = forms.CharField(
         required=False,
@@ -98,9 +105,22 @@ class BridgeDomainBulkEditForm(TagsBulkEditFormMixin, NautobotBulkEditForm):  # 
 
 class BridgeDomainFilterForm(NautobotFilterForm):
     """Filter form to filter searches."""
+    tenant = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        null_option="None",
+    )
+
+    vrf = DynamicModelMultipleChoiceField(
+        queryset=VRF.objects.all(),
+        to_field_name="name",
+        required=False,
+        null_option="None",
+    )
 
     model = models.BridgeDomain
-    field_order = ["q", "name"]
+    field_order = ["q", "name", "tenant", "vrf"]
 
     q = forms.CharField(
         required=False,
@@ -225,3 +245,16 @@ class ApplicationTerminationFilterForm(NautobotFilterForm):
         help_text="Search within Name or Slug.",
     )
     name = forms.CharField(required=False, label="Name")
+    epg = DynamicModelMultipleChoiceField(
+        queryset=models.EPG.objects.all(),
+        to_field_name="name",
+        required=False,
+        null_option="None",
+    )
+
+    device = DynamicModelMultipleChoiceField(
+        queryset=Device.objects.all(),
+        to_field_name="name",
+        required=False,
+        null_option="None",
+    )
