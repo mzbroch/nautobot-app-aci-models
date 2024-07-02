@@ -1,4 +1,4 @@
-"""Test ACIModel."""
+"""Test Application Profile Model."""
 
 from django.test import TestCase
 

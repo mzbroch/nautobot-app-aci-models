@@ -1,4 +1,4 @@
-"""Test ACIModel."""
+"""Test EPG Model."""
 
 from django.test import TestCase
 
