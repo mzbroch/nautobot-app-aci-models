@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from nautobot.extras.models import Status
+from nautobot.extras.models import Role, Status
 from nautobot.ipam.models import VRF, IPAddress, Namespace, Prefix
 from nautobot.tenancy.models import Tenant
 from aci_models import models

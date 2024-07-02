@@ -136,7 +136,9 @@ class ApplicationTermination(PrimaryModel):
 
     def __str__(self):
         """Return a string representation of the instance."""
-        return f"{self.interface.device.name}:{self.interface.name}:{self.vlan.vid}"
+        _vid = self.vlan.vid if self.vlan else 0
+
+        return f"{self.interface.device.name}:{self.interface.name}:{_vid}"
 
     def clean(self):
         pass
