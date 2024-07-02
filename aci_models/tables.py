@@ -2,14 +2,13 @@
 
 import django_tables2 as tables
 from nautobot.apps.tables import BaseTable, ButtonsColumn, ToggleColumn
-
 from nautobot.tenancy.tables import TenantColumn
 
 from aci_models import models
 
 APPTERM_LINK = """
 <a href="{% url 'plugins:aci_models:applicationtermination' pk=record.pk %}">
-    {{ record.name|default:'<span class="label label-info">Unnamed EPG</span>' }}
+    {{ record.name|default:'<span class="label label-info">Unnamed App. Term.</span>' }}
 </a>
 """
 
@@ -22,9 +21,6 @@ class ApplicationProfileTable(BaseTable):
     tenant = TenantColumn()
     actions = ButtonsColumn(
         models.ApplicationProfile,
-        # Option for modifying the default action buttons on each row:
-        # buttons=("changelog", "edit", "delete"),
-        # Option for modifying the pk for the action buttons:
         pk_field="pk",
     )
 
@@ -32,19 +28,12 @@ class ApplicationProfileTable(BaseTable):
         """Meta attributes."""
 
         model = models.ApplicationProfile
-        fields = (
+        fields = (  # pylint: disable=nb-use-fields-all
             "pk",
             "name",
             "tenant",
             "description",
         )
-
-        # Option for modifying the columns that show up in the list view by default:
-        # default_columns = (
-        #     "pk",
-        #     "name",
-        #     "description",
-        # )
 
 
 class BridgeDomainTable(BaseTable):
@@ -57,9 +46,6 @@ class BridgeDomainTable(BaseTable):
     vrf = tables.Column(verbose_name="VRF", linkify=lambda record: record.vrf.get_absolute_url(), accessor="vrf.name")
     actions = ButtonsColumn(
         models.BridgeDomain,
-        # Option for modifying the default action buttons on each row:
-        # buttons=("changelog", "edit", "delete"),
-        # Option for modifying the pk for the action buttons:
         pk_field="pk",
     )
 
@@ -67,7 +53,7 @@ class BridgeDomainTable(BaseTable):
         """Meta attributes."""
 
         model = models.BridgeDomain
-        fields = (
+        fields = (  # pylint: disable=nb-use-fields-all
             "pk",
             "name",
             "tenant",
@@ -76,13 +62,6 @@ class BridgeDomainTable(BaseTable):
             "description",
 
         )
-
-        # Option for modifying the columns that show up in the list view by default:
-        # default_columns = (
-        #     "pk",
-        #     "name",
-        #     "description",
-        # )
 
 
 class EPGTable(BaseTable):
@@ -96,9 +75,6 @@ class EPGTable(BaseTable):
     bridge_domain = tables.Column(linkify=True)
     actions = ButtonsColumn(
         models.EPG,
-        # Option for modifying the default action buttons on each row:
-        # buttons=("changelog", "edit", "delete"),
-        # Option for modifying the pk for the action buttons:
         pk_field="pk",
     )
 
@@ -106,7 +82,7 @@ class EPGTable(BaseTable):
         """Meta attributes."""
 
         model = models.EPG
-        fields = (
+        fields = (  # pylint: disable=nb-use-fields-all
             "pk",
             "name",
             "tenant",
@@ -114,13 +90,6 @@ class EPGTable(BaseTable):
             "bridge_domain",
             "description",
         )
-
-        # Option for modifying the columns that show up in the list view by default:
-        # default_columns = (
-        #     "pk",
-        #     "name",
-        #     "description",
-        # )
 
 
 class ApplicationTerminationTable(BaseTable):
@@ -135,9 +104,6 @@ class ApplicationTerminationTable(BaseTable):
     vlan = tables.Column(verbose_name="VLAN", linkify=True)
     actions = ButtonsColumn(
         models.ApplicationTermination,
-        # Option for modifying the default action buttons on each row:
-        # buttons=("changelog", "edit", "delete"),
-        # Option for modifying the pk for the action buttons:
         pk_field="pk",
     )
 
@@ -145,7 +111,7 @@ class ApplicationTerminationTable(BaseTable):
         """Meta attributes."""
 
         model = models.ApplicationTermination
-        fields = (
+        fields = (  # pylint: disable=nb-use-fields-all
             "pk",
             "name",
             "epg",
@@ -154,10 +120,3 @@ class ApplicationTerminationTable(BaseTable):
             "vlan",
             "description",
         )
-
-        # Option for modifying the columns that show up in the list view by default:
-        # default_columns = (
-        #     "pk",
-        #     "name",
-        #     "description",
-        # )

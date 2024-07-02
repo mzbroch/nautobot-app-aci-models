@@ -1,7 +1,7 @@
+# pylint: disable=too-many-ancestors
 """Models for Cisco ACI Models."""
 
 from django.db import models
-
 from nautobot.apps.models import PrimaryModel
 
 from .constants import CHARFIELD_MAX_LENGTH
@@ -108,6 +108,7 @@ class ApplicationTermination(PrimaryModel):
     )
     @property
     def device(self):
+        """Represents App-Terminating Device."""
         return self.interface.device if self.interface else None
 
     vlan = models.ForeignKey(

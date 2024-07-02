@@ -1,11 +1,10 @@
 """Filtering for aci_models."""
-import django_filters
 
 from nautobot.apps.filters import NameSearchFilterSet, NautobotFilterSet
-from nautobot.tenancy.models import Tenant
 from nautobot.core.filters import NaturalKeyOrPKMultipleChoiceFilter
-from nautobot.ipam.models import VRF
 from nautobot.dcim.models import Device
+from nautobot.ipam.models import VRF
+from nautobot.tenancy.models import Tenant
 
 from aci_models import models
 
