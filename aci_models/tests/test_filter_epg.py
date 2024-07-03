@@ -1,4 +1,4 @@
-"""Test ApplicationProfile Filter."""
+"""Test EPG Filter."""
 
 from django.test import TestCase
 
@@ -6,24 +6,27 @@ from aci_models import filters, models
 from aci_models.tests import fixtures
 
 
-class ApplicationProfileFilterTestCase(TestCase):
-    """ApplicationProfile Filter Test Case."""
+class EPGFilterTestCase(TestCase):
+    """EPG Filter Test Case."""
 
-    queryset = models.ApplicationProfile.objects.all()
-    filterset = filters.ApplicationProfileFilterSet
+    queryset = models.EPG.objects.all()
+    filterset = filters.EPGFilterSet
 
     @classmethod
     def setUpTestData(cls):
-        """Setup test data for ApplicationProfile Model."""
+        """Setup test data for EPG Model."""
         fixtures.create_tenants()
+        fixtures.create_ipam()
         fixtures.create_application_profile()
+        fixtures.create_bridge_domain()
+        fixtures.create_epg()
 
     def test_q_search_name(self):
-        """Test using Q search with name of ApplicationProfile."""
-        params = {"q": fixtures.APP_NAMES[0]}
+        """Test using Q search with name of EPG."""
+        params = {"q": fixtures.EPG_NAMES[0]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_q_invalid(self):
-        """Test using invalid Q search for ApplicationProfile."""
+        """Test using invalid Q search for EPG."""
         params = {"q": "NORESULTS"}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
