@@ -225,7 +225,6 @@ class ApplicationTerminationForm(NautobotModelForm):  # pylint: disable=too-many
 
     def clean(self):
         """Model validations."""
-        pass
         # uniquness: interface and volan
         # how to check if vlan is onsite / same DC etc.
 

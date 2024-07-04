@@ -151,5 +151,4 @@ class ApplicationTermination(PrimaryModel):
 
     def clean(self):
         """Model validations."""
-        pass
         # vlan should be restricted to location (+child) of the device .
