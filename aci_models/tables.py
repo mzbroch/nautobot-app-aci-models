@@ -12,6 +12,7 @@ APPTERM_LINK = """
 </a>
 """
 
+
 class ApplicationProfileTable(BaseTable):
     # pylint: disable=R0903
     """Table for ApplicationProfile list view."""
@@ -60,7 +61,6 @@ class BridgeDomainTable(BaseTable):
             "vrf",
             "ip_addresses",
             "description",
-
         )
 
 

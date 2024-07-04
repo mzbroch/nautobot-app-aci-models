@@ -10,6 +10,7 @@ from aci_models.tests import fixtures
 
 class TestBridgeDomainModel(TestCase):
     """Test Application Profile."""
+
     @classmethod
     def setUpTestData(cls):
         """Setup test data for ApplicationProfile Model."""
@@ -23,9 +24,7 @@ class TestBridgeDomainModel(TestCase):
         """Create with only required fields, and validate null description and __str__."""
 
         instance = models.BridgeDomain.objects.create(
-            name="Development Bridge Domain",
-            tenant=self.tenant,
-            vrf=self.vrf
+            name="Development Bridge Domain", tenant=self.tenant, vrf=self.vrf
         )
 
         self.assertEqual(instance.name, "Development Bridge Domain")

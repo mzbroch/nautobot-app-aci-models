@@ -1,4 +1,5 @@
 """Forms for aci_models."""
+
 from django import forms
 from nautobot.apps.forms import (
     DynamicModelChoiceField,
@@ -34,7 +35,9 @@ class ApplicationProfileForm(NautobotModelForm):  # pylint: disable=too-many-anc
 class ApplicationProfileBulkEditForm(TagsBulkEditFormMixin, NautobotBulkEditForm):  # pylint: disable=too-many-ancestors
     """ACIModel bulk edit form."""
 
-    pk = forms.ModelMultipleChoiceField(queryset=models.ApplicationProfile.objects.all(), widget=forms.MultipleHiddenInput)
+    pk = forms.ModelMultipleChoiceField(
+        queryset=models.ApplicationProfile.objects.all(), widget=forms.MultipleHiddenInput
+    )
     description = forms.CharField(required=False)
 
     class Meta:
@@ -110,6 +113,7 @@ class BridgeDomainBulkEditForm(TagsBulkEditFormMixin, NautobotBulkEditForm):  # 
 
 class BridgeDomainFilterForm(NautobotFilterForm):
     """Filter form to filter searches."""
+
     tenant = DynamicModelMultipleChoiceField(
         queryset=Tenant.objects.all(),
         to_field_name="name",
@@ -205,6 +209,7 @@ class ApplicationTerminationForm(NautobotModelForm):  # pylint: disable=too-many
         #     "vlan_group": "$vlan_group",
         # },
     )
+
     class Meta:
         """Meta attributes."""
 
@@ -227,7 +232,9 @@ class ApplicationTerminationForm(NautobotModelForm):  # pylint: disable=too-many
 class ApplicationTerminationBulkEditForm(TagsBulkEditFormMixin, NautobotBulkEditForm):  # pylint: disable=too-many-ancestors
     """ACIModel bulk edit form."""
 
-    pk = forms.ModelMultipleChoiceField(queryset=models.ApplicationTermination.objects.all(), widget=forms.MultipleHiddenInput)
+    pk = forms.ModelMultipleChoiceField(
+        queryset=models.ApplicationTermination.objects.all(), widget=forms.MultipleHiddenInput
+    )
     description = forms.CharField(required=False)
 
     class Meta:

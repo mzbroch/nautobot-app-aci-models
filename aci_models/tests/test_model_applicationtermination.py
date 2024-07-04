@@ -11,7 +11,6 @@ from aci_models.tests import fixtures
 class TestApplicationTerminationModel(TestCase):
     """Test EPG."""
 
-
     @classmethod
     def setUpTestData(cls):
         """Setup test data for ApplicationProfile Model."""
@@ -24,7 +23,6 @@ class TestApplicationTerminationModel(TestCase):
         cls.epg = models.EPG.objects.get(name=fixtures.EPG_NAMES[0])
         cls.interface = Interface.objects.first()
         cls.vlan = VLAN.objects.get(name=fixtures.VLAN_NAMES[0])
-
 
     def test_create_applicationtermination_only_required(self):
         """Create with only required fields, and validate null description and __str__."""

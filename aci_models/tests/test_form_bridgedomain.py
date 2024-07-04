@@ -1,4 +1,5 @@
 """Test BridgeDomain forms."""
+
 from django.test import TestCase
 from nautobot.ipam.models import VRF, IPAddress
 from nautobot.tenancy.models import Tenant

@@ -1,4 +1,5 @@
 """Unit tests for aci_models."""
+
 from nautobot.apps.testing import APIViewTestCases
 from nautobot.ipam.models import VRF
 from nautobot.tenancy.models import Tenant
@@ -23,20 +24,9 @@ class ApplicationProfileAPIViewTest(APIViewTestCases.APIViewTestCase):
         cls.tenant_2 = Tenant.objects.get(name=fixtures.TENANT_NAMES[1])
 
         cls.create_data = [
-            {
-                "name": "Test Model 1",
-                "description": "test description",
-                "tenant": cls.tenant_1.pk
-            },
-            {
-                "name": "Test Model 2",
-                "description": "test description",
-                "tenant": cls.tenant_2.pk
-            },
-            {
-                "name": "Test Model 3",
-                "tenant": cls.tenant_2.pk
-            },
+            {"name": "Test Model 1", "description": "test description", "tenant": cls.tenant_1.pk},
+            {"name": "Test Model 2", "description": "test description", "tenant": cls.tenant_2.pk},
+            {"name": "Test Model 3", "tenant": cls.tenant_2.pk},
         ]
 
 
@@ -58,12 +48,7 @@ class BridgeDomainAPIViewTest(APIViewTestCases.APIViewTestCase):
         cls.vrf_1 = VRF.objects.get(name=fixtures.VRF_NAMES[0])
 
         cls.create_data = [
-            {
-                "name": "Test Model 1",
-                "description": "test description",
-                "tenant": cls.tenant_1.pk,
-                "vrf": cls.vrf_1.pk
-            },
+            {"name": "Test Model 1", "description": "test description", "tenant": cls.tenant_1.pk, "vrf": cls.vrf_1.pk},
             {
                 "name": "Test Model 2",
                 "description": "test description",
@@ -106,20 +91,20 @@ class EPGAPIViewTest(APIViewTestCases.APIViewTestCase):
                 "description": "test description",
                 "tenant": cls.tenant_1.pk,
                 "application": cls.app_1.pk,
-                "bridge_domain": cls.bridge_domain_1.pk
+                "bridge_domain": cls.bridge_domain_1.pk,
             },
             {
                 "name": "Test Model 2",
                 "description": "test description",
                 "tenant": cls.tenant_2.pk,
                 "application": cls.app_2.pk,
-                "bridge_domain": cls.bridge_domain_2.pk
+                "bridge_domain": cls.bridge_domain_2.pk,
             },
             {
                 "name": "Test Model 3",
                 "tenant": cls.tenant_2.pk,
                 "application": cls.app_1.pk,
-                "bridge_domain": cls.bridge_domain_2.pk
+                "bridge_domain": cls.bridge_domain_2.pk,
             },
         ]
 

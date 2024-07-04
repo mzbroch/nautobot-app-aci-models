@@ -1,4 +1,5 @@
 """Test ApplicationProfile forms."""
+
 from django.test import TestCase
 from nautobot.tenancy.models import Tenant
 

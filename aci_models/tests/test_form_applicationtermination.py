@@ -1,4 +1,5 @@
 """Test ApplicationTermination forms."""
+
 from django.test import TestCase
 from nautobot.dcim.models import Interface
 from nautobot.ipam.models import VLAN

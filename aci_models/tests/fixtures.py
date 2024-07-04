@@ -41,7 +41,10 @@ EPG_NAMES = [
 VRF_NAMES = ["VRF One", "VRF Two", "VRF Three"]
 VLAN_NAMES = ["VLAN One", "VLAN Two", "VLAN Three"]
 NAMESPACE_NAMES = ["Namespace One"]
-IPS = ["10.1.1.1/24", "10.1.1.2/24",]
+IPS = [
+    "10.1.1.1/24",
+    "10.1.1.2/24",
+]
 
 
 def create_tenants():
@@ -86,9 +89,7 @@ def create_dcim():
     location_type = LocationType.objects.create(name="Location Type")
     location_type.content_types.add(ContentType.objects.get_for_model(Device))
     location = Location.objects.create(
-        location_type=location_type,
-        name="Development Location",
-        status=Status.objects.get_for_model(Location).first()
+        location_type=location_type, name="Development Location", status=Status.objects.get_for_model(Location).first()
     )
 
     manufacturer = Manufacturer.objects.create(name="Development Manufacturer")
@@ -182,17 +183,17 @@ def create_application_termination():
         name=APP_TERM_NAMES[0],
         epg=EPG.objects.get(name=EPG_NAMES[0]),
         interface=Interface.objects.get(name="Interface 1"),
-        #vlan=VLAN.objects.get(name=VLAN_NAMES[0]),
+        # vlan=VLAN.objects.get(name=VLAN_NAMES[0]),
     )
     ApplicationTermination.objects.create(
         name=APP_TERM_NAMES[1],
         epg=EPG.objects.get(name=EPG_NAMES[1]),
         interface=Interface.objects.get(name="Interface 2"),
-        #vlan=VLAN.objects.get(name=VLAN_NAMES[1]),
+        # vlan=VLAN.objects.get(name=VLAN_NAMES[1]),
     )
     ApplicationTermination.objects.create(
         name=APP_TERM_NAMES[2],
         epg=EPG.objects.get(name=EPG_NAMES[2]),
         interface=Interface.objects.get(name="Interface 3"),
-        #vlan=VLAN.objects.get(name=VLAN_NAMES[2]),
+        # vlan=VLAN.objects.get(name=VLAN_NAMES[2]),
     )

@@ -11,6 +11,7 @@ from aci_models import models
 
 class ApplicationProfileFilterSet(NautobotFilterSet, NameSearchFilterSet):  # pylint: disable=too-many-ancestors
     """Filter for ApplicationProfile."""
+
     tenant = NaturalKeyOrPKMultipleChoiceFilter(
         queryset=Tenant.objects.all(),
         to_field_name="name",
@@ -28,6 +29,7 @@ class ApplicationProfileFilterSet(NautobotFilterSet, NameSearchFilterSet):  # py
 
 class BridgeDomainFilterSet(NautobotFilterSet, NameSearchFilterSet):  # pylint: disable=too-many-ancestors
     """Filter for BridgeDomain."""
+
     tenant = NaturalKeyOrPKMultipleChoiceFilter(
         queryset=Tenant.objects.all(),
         to_field_name="name",
@@ -50,6 +52,7 @@ class BridgeDomainFilterSet(NautobotFilterSet, NameSearchFilterSet):  # pylint: 
 
 class EPGFilterSet(NautobotFilterSet, NameSearchFilterSet):  # pylint: disable=too-many-ancestors
     """Filter for EPG."""
+
     tenant = NaturalKeyOrPKMultipleChoiceFilter(
         queryset=Tenant.objects.all(),
         to_field_name="name",

@@ -9,6 +9,7 @@ from .constants import CHARFIELD_MAX_LENGTH
 
 class ApplicationProfile(PrimaryModel):
     """Represents Cisco ACI Application Profile."""
+
     name = models.CharField(max_length=CHARFIELD_MAX_LENGTH)
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
@@ -19,6 +20,7 @@ class ApplicationProfile(PrimaryModel):
 
     class Meta:
         """Meta class for ApplicationProfile."""
+
         verbose_name = "Cisco ACI Application Profile"
         verbose_name_plural = "Cisco ACI Application Profiles"
         ordering = ("name",)
@@ -31,6 +33,7 @@ class ApplicationProfile(PrimaryModel):
 
 class BridgeDomain(PrimaryModel):
     """Represents Cisco ACI Bridge Domain."""
+
     name = models.CharField(max_length=CHARFIELD_MAX_LENGTH)
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
@@ -52,6 +55,7 @@ class BridgeDomain(PrimaryModel):
 
     class Meta:
         """Meta class for BridgeDomain."""
+
         verbose_name = "Cisco ACI Bridge Domain"
         verbose_name_plural = "Cisco ACI Bridge Domains"
         ordering = ("name",)
@@ -64,6 +68,7 @@ class BridgeDomain(PrimaryModel):
 
 class EPG(PrimaryModel):
     """Represents Cisco ACI EPG."""
+
     name = models.CharField(max_length=CHARFIELD_MAX_LENGTH)
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
@@ -84,6 +89,7 @@ class EPG(PrimaryModel):
 
     class Meta:
         """Meta class for EPG."""
+
         verbose_name = "Cisco ACI EPG"
         verbose_name_plural = "Cisco ACI EPGs"
         ordering = ("name",)
@@ -96,6 +102,7 @@ class EPG(PrimaryModel):
 
 class ApplicationTermination(PrimaryModel):
     """Represents Cisco ACI Application Terminations."""
+
     epg = models.ForeignKey(
         EPG,
         related_name="aci_apptermination",
@@ -106,6 +113,7 @@ class ApplicationTermination(PrimaryModel):
         related_name="aci_apptermination",
         on_delete=models.CASCADE,
     )
+
     @property
     def device(self):
         """Represents App-Terminating Device."""
@@ -129,6 +137,7 @@ class ApplicationTermination(PrimaryModel):
 
     class Meta:
         """Meta class for ApplicationTermination."""
+
         verbose_name = "Cisco ACI App Termination"
         verbose_name_plural = "Cisco ACI App Termination"
         ordering = ("name",)
