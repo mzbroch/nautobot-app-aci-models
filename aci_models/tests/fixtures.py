@@ -1,17 +1,12 @@
 """Create fixtures for tests."""
 
 from django.contrib.contenttypes.models import ContentType
-
-from nautobot.tenancy.models import Tenant
-from aci_models.models import ApplicationProfile, ApplicationTermination, BridgeDomain, EPG
-from nautobot.extras.models import Status
-from nautobot.ipam.models import VRF, IPAddress, Namespace, Prefix
-from nautobot.tenancy.models import Tenant
-
-from nautobot.extras.models import Role, Status
 from nautobot.dcim.models import Device, DeviceType, Interface, Location, LocationType, Manufacturer
+from nautobot.extras.models import Role, Status
 from nautobot.ipam.models import VLAN, VRF, IPAddress, Namespace, Prefix
 from nautobot.tenancy.models import Tenant
+
+from aci_models.models import EPG, ApplicationProfile, ApplicationTermination, BridgeDomain
 
 TENANT_NAMES = [
     "Tenant One",
@@ -50,11 +45,13 @@ IPS = ["10.1.1.1/24", "10.1.1.2/24",]
 
 
 def create_tenants():
+    """Create helper tenancy data."""
     for tenant_name in TENANT_NAMES:
         Tenant.objects.create(name=tenant_name)
 
 
 def create_ipam():
+    """Create helper ipam data."""
     VRF.objects.create(name=VRF_NAMES[0])
     namespace = Namespace.objects.create(name=NAMESPACE_NAMES[0])
 
@@ -85,6 +82,7 @@ def create_ipam():
 
 
 def create_dcim():
+    """Create helper dcim data."""
     location_type = LocationType.objects.create(name="Location Type")
     location_type.content_types.add(ContentType.objects.get_for_model(Device))
     location = Location.objects.create(
@@ -106,12 +104,13 @@ def create_dcim():
         role=device_role,
         status=device_status,
     )
-    interface = Interface.objects.create(
-        name="Interface 1",
-        status=Status.objects.get_for_model(Interface).first(),
-        type="OTHER",
-        device=device,
-    )
+    for i in range(6):
+        Interface.objects.create(
+            name=f"Interface {i+1}",
+            status=Status.objects.get_for_model(Interface).first(),
+            type="OTHER",
+            device=device,
+        )
 
 
 def create_application_profile():
@@ -134,6 +133,7 @@ def create_application_profile():
 
 
 def create_bridge_domain():
+    """Fixture to create necessary number of Bridge Domain for tests."""
     BridgeDomain.objects.create(
         name=BRIDGE_DOMAINS[0],
         tenant=Tenant.objects.get(name=TENANT_NAMES[0]),
@@ -155,6 +155,7 @@ def create_bridge_domain():
 
 
 def create_epg():
+    """Fixture to create necessary number of EPG for tests."""
     EPG.objects.create(
         name=EPG_NAMES[0],
         tenant=Tenant.objects.get(name=TENANT_NAMES[0]),
@@ -176,21 +177,22 @@ def create_epg():
 
 
 def create_application_termination():
+    """Fixture to create necessary number of Application Termination for tests."""
     ApplicationTermination.objects.create(
         name=APP_TERM_NAMES[0],
         epg=EPG.objects.get(name=EPG_NAMES[0]),
-        interface=Interface.objects.first(),
-        vlan=VLAN.objects.get(name=VLAN_NAMES[0]),
+        interface=Interface.objects.get(name="Interface 1"),
+        #vlan=VLAN.objects.get(name=VLAN_NAMES[0]),
     )
     ApplicationTermination.objects.create(
         name=APP_TERM_NAMES[1],
-        epg=EPG.objects.get(name=EPG_NAMES[0]),
-        interface=Interface.objects.first(),
-        vlan=VLAN.objects.get(name=VLAN_NAMES[1]),
+        epg=EPG.objects.get(name=EPG_NAMES[1]),
+        interface=Interface.objects.get(name="Interface 2"),
+        #vlan=VLAN.objects.get(name=VLAN_NAMES[1]),
     )
     ApplicationTermination.objects.create(
         name=APP_TERM_NAMES[2],
-        epg=EPG.objects.get(name=EPG_NAMES[0]),
-        interface=Interface.objects.first(),
-        vlan=VLAN.objects.get(name=VLAN_NAMES[2]),
+        epg=EPG.objects.get(name=EPG_NAMES[2]),
+        interface=Interface.objects.get(name="Interface 3"),
+        #vlan=VLAN.objects.get(name=VLAN_NAMES[2]),
     )

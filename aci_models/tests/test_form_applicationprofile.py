@@ -1,9 +1,9 @@
 """Test ApplicationProfile forms."""
 from django.test import TestCase
+from nautobot.tenancy.models import Tenant
 
 from aci_models import forms
 from aci_models.tests import fixtures
-from nautobot.tenancy.models import Tenant
 
 
 class ApplicationProfileTest(TestCase):

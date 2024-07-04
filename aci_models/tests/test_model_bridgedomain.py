@@ -1,10 +1,9 @@
 """Test Bridge Domain Model."""
 
 from django.test import TestCase
-
-from nautobot.extras.models import Status
-from nautobot.ipam.models import VRF, IPAddress, Namespace, Prefix
+from nautobot.ipam.models import VRF, IPAddress
 from nautobot.tenancy.models import Tenant
+
 from aci_models import models
 from aci_models.tests import fixtures
 

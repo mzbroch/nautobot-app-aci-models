@@ -1,14 +1,10 @@
 """Test ApplicationTermination forms."""
 from django.test import TestCase
-
-from aci_models import models, forms
-from aci_models.tests import fixtures
-from nautobot.extras.models import Status
-from nautobot.ipam.models import VRF, IPAddress, Namespace, Prefix
-from nautobot.tenancy.models import Tenant
-
 from nautobot.dcim.models import Interface
 from nautobot.ipam.models import VLAN
+
+from aci_models import forms, models
+from aci_models.tests import fixtures
 
 
 class ApplicationTerminationTest(TestCase):

@@ -1,9 +1,8 @@
 """Test Application Profile Model."""
 
 from django.test import TestCase
-
-
 from nautobot.tenancy.models import Tenant
+
 from aci_models import models
 from aci_models.tests import fixtures
 

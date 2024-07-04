@@ -1,11 +1,10 @@
 """Test BridgeDomain forms."""
 from django.test import TestCase
+from nautobot.ipam.models import VRF, IPAddress
+from nautobot.tenancy.models import Tenant
 
 from aci_models import forms
 from aci_models.tests import fixtures
-from nautobot.extras.models import Status
-from nautobot.ipam.models import VRF, IPAddress, Namespace, Prefix
-from nautobot.tenancy.models import Tenant
 
 
 class BridgeDomainTest(TestCase):

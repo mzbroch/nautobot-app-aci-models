@@ -1,12 +1,9 @@
 """Test Application Termination Model."""
 
-from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
+from nautobot.dcim.models import Interface
+from nautobot.ipam.models import VLAN
 
-from nautobot.extras.models import Role, Status
-from nautobot.dcim.models import Device, DeviceType, Interface, Location, LocationType, Manufacturer
-from nautobot.ipam.models import VLAN, VRF, IPAddress, Namespace, Prefix
-from nautobot.tenancy.models import Tenant
 from aci_models import models
 from aci_models.tests import fixtures
 
