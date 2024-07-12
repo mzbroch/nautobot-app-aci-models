@@ -685,14 +685,14 @@ def ruff(context, action=["lint"], fix=False, output_format="full"):
         action = ["lint"]
 
     if "format" in action:
-        command = "ruff format"
+        command = "ruff format --config=pyproject.toml"
         if not fix:
             command += " --check"
         command += " ."
         run_command(context, command)
 
     if "lint" in action:
-        command = "ruff check"
+        command = "ruff check --config=pyproject.toml"
         if fix:
             command += " --fix"
         command += f" --output-format {output_format} ."
