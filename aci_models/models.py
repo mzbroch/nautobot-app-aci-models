@@ -105,12 +105,12 @@ class ApplicationTermination(PrimaryModel):
 
     epg = models.ForeignKey(
         EPG,
-        related_name="aci_apptermination",
+        related_name="aci_appterminations",
         on_delete=models.CASCADE,
     )
     interface = models.ForeignKey(
         to="dcim.Interface",
-        related_name="aci_apptermination",
+        related_name="aci_appterminations",
         on_delete=models.CASCADE,
     )
 
@@ -121,7 +121,7 @@ class ApplicationTermination(PrimaryModel):
 
     vlan = models.ForeignKey(
         to="ipam.VLAN",
-        related_name="aci_apptermination",
+        related_name="aci_appterminations",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
