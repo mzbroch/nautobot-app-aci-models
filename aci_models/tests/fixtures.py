@@ -50,34 +50,34 @@ IPS = [
 def create_tenants():
     """Create helper tenancy data."""
     for tenant_name in TENANT_NAMES:
-        Tenant.objects.create(name=tenant_name)
+        Tenant.objects.get_or_create(name=tenant_name)
 
 
 def create_ipam():
     """Create helper ipam data."""
-    VRF.objects.create(name=VRF_NAMES[0])
-    namespace = Namespace.objects.create(name=NAMESPACE_NAMES[0])
+    VRF.objects.get_or_create(name=VRF_NAMES[0])
+    namespace, _ = Namespace.objects.get_or_create(name=NAMESPACE_NAMES[0])
 
     ipaddr_status = Status.objects.get_for_model(IPAddress).first()
     prefix_status = Status.objects.get_for_model(Prefix).first()
 
-    Prefix.objects.create(
+    prefix, _ = Prefix.objects.get_or_create(
         prefix="10.1.1.0/24",
         namespace=namespace,
         status=prefix_status,
     )
-    IPAddress.objects.create(
+    IPAddress.objects.get_or_create(
         address="10.1.1.1/24",
-        namespace=namespace,
+        parent=prefix,
         status=ipaddr_status,
     )
-    IPAddress.objects.create(
+    IPAddress.objects.get_or_create(
         address="10.1.1.2/24",
-        namespace=namespace,
+        parent=prefix,
         status=ipaddr_status,
     )
     for i, vlan_name in enumerate(VLAN_NAMES):
-        VLAN.objects.create(
+        VLAN.objects.get_or_create(
             name=vlan_name,
             vid=i + 100,
             status=Status.objects.get_for_model(VLAN).first(),
@@ -86,31 +86,45 @@ def create_ipam():
 
 def create_dcim():
     """Create helper dcim data."""
-    location_type = LocationType.objects.create(name="Location Type")
+    location_type, _ = LocationType.objects.get_or_create(name="Location Type")
     location_type.content_types.add(ContentType.objects.get_for_model(Device))
-    location = Location.objects.create(
+    location, _ = Location.objects.get_or_create(
         location_type=location_type, name="Development Location", status=Status.objects.get_for_model(Location).first()
     )
 
-    manufacturer = Manufacturer.objects.create(name="Development Manufacturer")
-    device_type = DeviceType.objects.create(manufacturer=manufacturer, model="Device Type 1")
-    device_role = Role.objects.create(name="Device Role")
+    manufacturer, _ = Manufacturer.objects.get_or_create(name="Development Manufacturer")
+    device_type, _ = DeviceType.objects.get_or_create(manufacturer=manufacturer, model="Device Type 1")
+    device_role, _ = Role.objects.get_or_create(name="Device Role")
     device_role.content_types.add(ContentType.objects.get_for_model(Device))
     device_status = Status.objects.get_for_model(Device).first()
 
-    device = Device.objects.create(
+    device_1 = Device.objects.create(
         device_type=device_type,
         name="Device 1",
         location=location,
         role=device_role,
         status=device_status,
     )
+    device_2 = Device.objects.create(
+        device_type=device_type,
+        name="Device 2",
+        location=location,
+        role=device_role,
+        status=device_status,
+    )
     for i in range(6):
-        Interface.objects.create(
-            name=f"Interface {i+1}",
+        Interface.objects.get_or_create(
+            name=f"Ethernet0/{i+1}",
             status=Status.objects.get_for_model(Interface).first(),
             type="OTHER",
-            device=device,
+            device=device_1,
+        )
+    for i in range(6):
+        Interface.objects.get_or_create(
+            name=f"Ethernet0/{i+1}",
+            status=Status.objects.get_for_model(Interface).first(),
+            type="OTHER",
+            device=device_2,
         )
 
 
@@ -182,18 +196,18 @@ def create_application_termination():
     ApplicationTermination.objects.create(
         name=APP_TERM_NAMES[0],
         epg=EPG.objects.get(name=EPG_NAMES[0]),
-        interface=Interface.objects.get(name="Interface 1"),
+        interface=Interface.objects.get(name="Ethernet0/1", device__name="Device 1"),
         # vlan=VLAN.objects.get(name=VLAN_NAMES[0]),
     )
     ApplicationTermination.objects.create(
         name=APP_TERM_NAMES[1],
         epg=EPG.objects.get(name=EPG_NAMES[1]),
-        interface=Interface.objects.get(name="Interface 2"),
+        interface=Interface.objects.get(name="Ethernet0/2", device__name="Device 1"),
         # vlan=VLAN.objects.get(name=VLAN_NAMES[1]),
     )
     ApplicationTermination.objects.create(
         name=APP_TERM_NAMES[2],
         epg=EPG.objects.get(name=EPG_NAMES[2]),
-        interface=Interface.objects.get(name="Interface 3"),
+        interface=Interface.objects.get(name="Ethernet0/3", device__name="Device 1"),
         # vlan=VLAN.objects.get(name=VLAN_NAMES[2]),
     )
