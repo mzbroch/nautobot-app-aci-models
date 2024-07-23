@@ -1,0 +1,15 @@
+{% extends 'dcim/device.html' %}
+{% load helpers %}
+{% load render_table from django_tables2 %}
+{% load static %}
+
+{% block content %}
+    {% render_table app_table 'inc/table.html' %}
+    {% table_config_form app_table %}
+{% endblock content %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'js/connection_toggles.js' %}?v{{ settings.VERSION }}"></script>
+    <script src="{% static 'js/tableconfig.js' %}?v{{ settings.VERSION }}"></script>
+{% endblock javascript %}
