@@ -99,6 +99,7 @@ class ApplicationTerminationTable(BaseTable):
     pk = ToggleColumn()
     name = tables.TemplateColumn(template_code=APPTERM_LINK)
     epg = tables.Column(verbose_name="EPG", linkify=True)
+    epg__application__name = tables.Column(verbose_name="Application Name", linkify=True)
     device = tables.Column(linkify=True)
     interface = tables.Column(linkify=True)
     vlan = tables.Column(verbose_name="VLAN", linkify=True)
@@ -115,6 +116,7 @@ class ApplicationTerminationTable(BaseTable):
             "pk",
             "name",
             "epg",
+            "epg__application__name",
             "device",
             "interface",
             "vlan",
