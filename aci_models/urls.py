@@ -18,6 +18,11 @@ urlpatterns = [
         views.DeviceAciApplicationProfilesView.as_view(),
         name="device_aci_application_profiles",
     ),
+    path(
+        "devices/<uuid:pk>/aci-application-terminations/",
+        views.DeviceAciApplicationTerminationsView.as_view(),
+        name="device_aci_application_terminations",
+    ),
 ]
 
 urlpatterns += router.urls
