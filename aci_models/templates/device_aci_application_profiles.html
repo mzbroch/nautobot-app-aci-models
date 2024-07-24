@@ -4,9 +4,23 @@
 {% load static %}
 
 {% block content %}
-    {% render_table app_table 'inc/table.html' %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>ACI Application Profiles</strong>
+                <div class="pull-right noprint">
+                    {% if request.user.is_authenticated %}
+                        <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#ApplicationProfileTable_config" title="Configure table"><i class="mdi mdi-cog"></i> Configure</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% render_table app_table 'inc/table.html' %}
+        </div>
+    </form>
     {% table_config_form app_table %}
 {% endblock content %}
+
 
 {% block javascript %}
     {{ block.super }}

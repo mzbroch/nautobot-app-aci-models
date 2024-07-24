@@ -2,7 +2,7 @@
 
 from nautobot.apps.filters import NameSearchFilterSet, NautobotFilterSet
 from nautobot.core.filters import NaturalKeyOrPKMultipleChoiceFilter
-from nautobot.dcim.models import Device
+from nautobot.dcim.models import Device, Interface
 from nautobot.ipam.models import VRF
 from nautobot.tenancy.models import Tenant
 
@@ -91,6 +91,12 @@ class ApplicationTerminationFilterSet(NautobotFilterSet, NameSearchFilterSet):  
         to_field_name="name",
         field_name="interface__device",
         label="Device (name or ID)",
+    )
+    interface = NaturalKeyOrPKMultipleChoiceFilter(
+        queryset=Interface.objects.all(),
+        to_field_name="name",
+        field_name="interface",
+        label="Interface",
     )
 
     class Meta:

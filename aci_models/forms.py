@@ -190,7 +190,7 @@ class EPGFilterForm(NautobotFilterForm):
 class ApplicationTerminationForm(NautobotModelForm):  # pylint: disable=too-many-ancestors
     """ACIModel creation/edit form."""
 
-    epg = DynamicModelChoiceField(queryset=models.EPG.objects.all(), required=True)
+    epg = DynamicModelChoiceField(queryset=models.EPG.objects.all(), required=True, label="EPG")
     device = DynamicModelChoiceField(
         queryset=Device.objects.all(),
         required=False,
@@ -263,10 +263,16 @@ class ApplicationTerminationFilterForm(NautobotFilterForm):
         required=False,
         null_option="None",
     )
-
     device = DynamicModelMultipleChoiceField(
         queryset=Device.objects.all(),
         to_field_name="name",
         required=False,
         null_option="None",
+    )
+    interface = DynamicModelMultipleChoiceField(
+        queryset=Interface.objects.all(),
+        to_field_name="name",
+        # field_name="interface",
+        # label="Interface",
+        query_params={"device": "$device"}
     )

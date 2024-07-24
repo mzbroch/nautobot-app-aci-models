@@ -1,6 +1,7 @@
 """Create fixtures for tests."""
 
 from django.contrib.contenttypes.models import ContentType
+from nautobot.dcim.choices import InterfaceTypeChoices
 from nautobot.dcim.models import Device, DeviceType, Interface, Location, LocationType, Manufacturer
 from nautobot.extras.models import Role, Status
 from nautobot.ipam.models import VLAN, VRF, IPAddress, Namespace, Prefix
@@ -116,14 +117,14 @@ def create_dcim():
         Interface.objects.get_or_create(
             name=f"Ethernet0/{i+1}",
             status=Status.objects.get_for_model(Interface).first(),
-            type="OTHER",
+            type=InterfaceTypeChoices.TYPE_OTHER,
             device=device_1,
         )
     for i in range(6):
         Interface.objects.get_or_create(
             name=f"Ethernet0/{i+1}",
             status=Status.objects.get_for_model(Interface).first(),
-            type="OTHER",
+            type=InterfaceTypeChoices.TYPE_OTHER,
             device=device_2,
         )
 
