@@ -64,7 +64,7 @@ class AciAdapter(Adapter):
         "aci_apptermination",
     ]
 
-    def __init__(self, *args, job=None, sync=None, client, tenant_prefix, **kwargs):
+    def __init__(self, *args, job=None, sync=None, client, tenant_prefix, controller_tag, **kwargs):
         """Initialize ACI.
 
         Args:
@@ -78,6 +78,7 @@ class AciAdapter(Adapter):
         self.conn = client
         self.site = client.site
         self.tenant_prefix = tenant_prefix
+        self.controller_tag = controller_tag
         self.nodes = self.conn.get_nodes()
         self.controllers = self.conn.get_controllers()
         self.nodes.update(self.controllers)
@@ -97,7 +98,7 @@ class AciAdapter(Adapter):
                     name=tenant_name,
                     description=_tenant["description"],
                     comments=PLUGIN_CFG.get("comments", ""),
-                    site_tag=self.site,
+                    controller_tag=self.controller_tag,
                     msite_tag=_msite_tag,
                 )
                 self.add(new_tenant)
@@ -114,7 +115,7 @@ class AciAdapter(Adapter):
             else:
                 namespace = vrf_tenant
             new_vrf = self.vrf(
-                name=vrf_name, namespace=namespace, tenant=vrf_tenant, description=vrf_description, site_tag=self.site
+                name=vrf_name, namespace=namespace, tenant=vrf_tenant, description=vrf_description, controller_tag=self.controller_tag
             )
             if _vrf["tenant"] not in PLUGIN_CFG.get("ignore_tenants"):
                 self.add(new_vrf)
@@ -135,7 +136,7 @@ class AciAdapter(Adapter):
                 description="",
                 vrf=vrf if vrf else None,
                 vrf_tenant=vrf_tenant if vrf_tenant else None,
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             self.add(new_pf)
 
@@ -170,7 +171,7 @@ class AciAdapter(Adapter):
                     tenant=mgmt_tenant,
                     namespace="Global",
                     site=self.site,
-                    site_tag=self.site,
+                    controller_tag=self.controller_tag,
                 )
                 # Using Try/Except to check for an existing loaded object
                 # If the object doesn't exist we can create it
@@ -209,7 +210,7 @@ class AciAdapter(Adapter):
                     tenant=mgmt_tenant,
                     namespace="Global",
                     site=self.site,
-                    site_tag=self.site,
+                    controller_tag=self.controller_tag,
                 )
                 self.add(new_ipaddress)
         # Bridge domain subnets
@@ -245,7 +246,7 @@ class AciAdapter(Adapter):
                         tenant=vrf_tenant or tenant_name,
                         namespace=_namespace,
                         site=self.site,
-                        site_tag=self.site,
+                        controller_tag=self.controller_tag,
                     )
                     # Using Try/Except to check for an existing loaded object
                     # If the object doesn't exist we can create it
@@ -285,7 +286,7 @@ class AciAdapter(Adapter):
                             tenant=vrf_tenant or tenant_name,
                             vrf=bd_value["vrf"] if bd_value.get("vrf") != "" else None,
                             vrf_tenant=vrf_tenant,
-                            site_tag=self.site,
+                            controller_tag=self.controller_tag,
                         )
                         if not bd_value["vrf"] or (bd_value["vrf"] and not vrf_tenant):
                             self.job.logger.warning(
@@ -332,7 +333,7 @@ class AciAdapter(Adapter):
                         device_type=device_specs["model"],
                         type=intf["type"],
                         mgmt_only=intf.get("mgmt_only", False),
-                        site_tag=self.site,
+                        controller_tag=self.controller_tag,
                     )
                     self.add(new_interfacetemplate)
             else:
@@ -376,7 +377,7 @@ class AciAdapter(Adapter):
                             gbic_model=interface["gbic_model"],
                             state=interface["state"],
                             type=intf_type,
-                            site_tag=self.site,
+                            controller_tag=self.controller_tag,
                         )
                         self.add(new_interface)
                     for _interface in device_specs["interfaces"]:
@@ -397,7 +398,7 @@ class AciAdapter(Adapter):
                                 gbic_model="",
                                 state="up",
                                 type=intf_type,
-                                site_tag=self.site,
+                                controller_tag=self.controller_tag,
                             )
                             self.add(new_interface)
             else:
@@ -444,7 +445,7 @@ class AciAdapter(Adapter):
                 node_id=int(key),
                 pod_id=value["pod_id"],
                 site=self.site,
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
                 controller_group=(
                     self.job.apic.controller_managed_device_group.name
                     if self.job.apic.controller_managed_device_group
@@ -465,7 +466,7 @@ class AciAdapter(Adapter):
                 _description = f"Application Profile {_name} from Tenant {_tenant_name} synced from APIC"
 
                 new_ap = self.aci_appprofile(
-                    name=_name, tenant=_tenant_name, description=_description, site_tag=self.site
+                    name=_name, tenant=_tenant_name, description=_description, controller_tag=self.controller_tag
                 )
                 if _tnt["name"] not in PLUGIN_CFG.get("ignore_tenants"):
                     if self.job.debug:
@@ -517,7 +518,7 @@ class AciAdapter(Adapter):
                             "namespace": namespace,
                             "vrf_tenant": vrf_tenant,
                         },
-                        site_tag=self.site,
+                        controller_tag=self.controller_tag,
                     )
                     try:
                         self.get(obj=new_bd, identifier=new_bd.get_unique_id())
@@ -546,7 +547,7 @@ class AciAdapter(Adapter):
                 application=epg[2],
                 bridge_domain=epg[3],
                 description=_description,
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             if self.job.debug:
                 self.job.logger.debug(msg=f"Loading EPG: {new_epg} from APIC.")
@@ -572,7 +573,7 @@ class AciAdapter(Adapter):
                 interface=_intf_attrs,
                 vlan=_vlan_id,
                 description=_description,
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             if self.job.debug:
                 self.job.logger.debug(msg=f"Path {_device_name}:{_intf_name}:{_vlan_id} synced from APIC")
