@@ -263,6 +263,12 @@ class ApplicationTerminationFilterForm(NautobotFilterForm):
         required=False,
         null_option="None",
     )
+    epg__application = DynamicModelMultipleChoiceField(
+        queryset=models.ApplicationProfile.objects.all(),
+        to_field_name="epg__application",
+        required=False,
+        null_option="None",
+    )
     device = DynamicModelMultipleChoiceField(
         queryset=Device.objects.all(),
         to_field_name="name",
@@ -272,7 +278,6 @@ class ApplicationTerminationFilterForm(NautobotFilterForm):
     interface = DynamicModelMultipleChoiceField(
         queryset=Interface.objects.all(),
         to_field_name="name",
-        # field_name="interface",
-        # label="Interface",
-        query_params={"device": "$device"}
+        query_params={"device": "$device"},
+        required=False,
     )

@@ -86,6 +86,12 @@ class ApplicationTerminationFilterSet(NautobotFilterSet, NameSearchFilterSet):  
         to_field_name="name",
         label="EPG (name or ID)",
     )
+    epg__application = NaturalKeyOrPKMultipleChoiceFilter(
+        queryset=models.ApplicationProfile.objects.all(),
+        to_field_name="name",
+        field_name="epg__application__name",
+        label="Application Profile (name or ID)",
+    )
     device = NaturalKeyOrPKMultipleChoiceFilter(
         queryset=Device.objects.all(),
         to_field_name="name",
