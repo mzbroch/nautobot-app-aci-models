@@ -64,7 +64,7 @@ class AciAdapter(Adapter):
         "aci_apptermination",
     ]
 
-    def __init__(self, *args, job=None, sync=None, client, **kwargs):
+    def __init__(self, *args, job=None, sync=None, client, tenant_prefix, **kwargs):
         """Initialize ACI.
 
         Args:
@@ -76,7 +76,7 @@ class AciAdapter(Adapter):
         self.job = job
         self.sync = sync
         self.conn = client
-        self.site = client.get("site")
+        self.site = client.site
         self.tenant_prefix = tenant_prefix
         self.nodes = self.conn.get_nodes()
         self.controllers = self.conn.get_controllers()
