@@ -16,7 +16,7 @@ except ImportError:
 
 
 def _read_settings() -> dict:
-    config = settings.PLUGINS_CONFIG["nautobot_ssot"]
+    config = settings.PLUGINS_CONFIG["aci_models"]
     return {key[4:]: value for key, value in config.items() if key.startswith("aci_")}
 
 

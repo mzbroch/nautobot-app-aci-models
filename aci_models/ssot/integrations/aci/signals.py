@@ -16,7 +16,7 @@ def register_signals(sender):
     """Registers signals."""
     nautobot_database_ready.connect(aci_create_tag, sender=sender)
     nautobot_database_ready.connect(aci_create_manufacturer, sender=sender)
-    nautobot_database_ready.connect(aci_create_site, sender=sender)
+    #nautobot_database_ready.connect(aci_create_site, sender=sender)
     nautobot_database_ready.connect(device_custom_fields, sender=sender)
     nautobot_database_ready.connect(interface_custom_fields, sender=sender)
 
@@ -42,13 +42,13 @@ def aci_create_tag(apps, **kwargs):
         name="ACI_MULTISITE",
         color="03a9f4",
     )
-    apics = PLUGIN_CFG.get("apics")
-    for key in apics:
-        if ("SITE" in key or "STAGE" in key) and not tag.objects.filter(name=apics[key]).exists():
-            tag.objects.update_or_create(
-                name=apics[key],
-                color="".join([random.choice("ABCDEF0123456789") for i in range(6)]),  # nosec
-            )
+    #apics = PLUGIN_CFG.get("apics")
+    #for key in apics:
+    #    if ("SITE" in key or "STAGE" in key) and not tag.objects.filter(name=apics[key]).exists():
+    #        tag.objects.update_or_create(
+    #            name=apics[key],
+    #            color="".join([random.choice("ABCDEF0123456789") for i in range(6)]),  # nosec
+    #        )
 
 
 def aci_create_manufacturer(apps, **kwargs):

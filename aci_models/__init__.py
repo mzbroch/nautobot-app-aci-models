@@ -3,6 +3,8 @@
 # Metadata is inherited from Nautobot. If not including Nautobot in the environment, this should be added
 from importlib import metadata
 
+from aci_models.ssot.integrations.utils import each_enabled_integration_module
+from aci_models.utils import logger
 from nautobot.apps import NautobotAppConfig
 
 __version__ = metadata.version(__name__)
@@ -23,5 +25,12 @@ class AciModelsConfig(NautobotAppConfig):
     default_settings = {}
     caching_config = {}
 
+    def ready(self):
+        """Trigger callback when database is ready."""
+        super().ready()
+
+        for module in each_enabled_integration_module("signals"):
+            logger.debug("Registering signals for %s", module.__file__)
+            module.register_signals(self)
 
 config = AciModelsConfig  # pylint:disable=invalid-name

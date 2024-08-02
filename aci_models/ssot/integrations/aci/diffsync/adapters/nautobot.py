@@ -143,7 +143,7 @@ class NautobotAdapter(Adapter):
 
     def load_devicetypes(self):
         """Method to load Device Types from Nautobot."""
-        _tag = Tag.objects.get(name=PLUGIN_CFG.get("tag"))
+        _tag = Tag.objects.get(name=PLUGIN_CFG.get("tag", "SoR:CiscoACI"))
         for nbdevicetype in DeviceType.objects.filter(tags=_tag):
             _devicetype = self.device_type(
                 model=nbdevicetype.model,

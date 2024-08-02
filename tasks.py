@@ -48,7 +48,7 @@ namespace = Collection("aci_models")
 namespace.configure(
     {
         "aci_models": {
-            "nautobot_ver": "2.0.0",
+            "nautobot_ver": "2.2.7",
             "project_name": "aci-models",
             "python_ver": "3.11",
             "local": False,

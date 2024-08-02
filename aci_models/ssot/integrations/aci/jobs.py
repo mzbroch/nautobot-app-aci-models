@@ -32,7 +32,7 @@ class AciDataSource(DataSource, Job):  # pylint: disable=abstract-method, too-ma
         display_field="name",
         required=False,
         label="Device(s) Location",
-        #help_text="New devices will be placed into this location.",
+        # help_text="New devices will be placed into this location.",
     )
 
     debug = BooleanVar(description="Enable for verbose debug logging.")
@@ -48,7 +48,7 @@ class AciDataSource(DataSource, Job):  # pylint: disable=abstract-method, too-ma
     def __init__(self):
         """Initialize ExampleYAMLDataSource."""
         super().__init__()
-        self.diffsync_flags = (self.diffsync_flags,)
+        # self.diffsync_flags = (self.diffsync_flags,)
 
     @classmethod
     def data_mappings(cls):
