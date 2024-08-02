@@ -16,7 +16,7 @@ def register_signals(sender):
     """Registers signals."""
     nautobot_database_ready.connect(aci_create_tag, sender=sender)
     nautobot_database_ready.connect(aci_create_manufacturer, sender=sender)
-    #nautobot_database_ready.connect(aci_create_site, sender=sender)
+    nautobot_database_ready.connect(aci_create_location_type, sender=sender)
     nautobot_database_ready.connect(device_custom_fields, sender=sender)
     nautobot_database_ready.connect(interface_custom_fields, sender=sender)
 
@@ -42,14 +42,6 @@ def aci_create_tag(apps, **kwargs):
         name="ACI_MULTISITE",
         color="03a9f4",
     )
-    #apics = PLUGIN_CFG.get("apics")
-    #for key in apics:
-    #    if ("SITE" in key or "STAGE" in key) and not tag.objects.filter(name=apics[key]).exists():
-    #        tag.objects.update_or_create(
-    #            name=apics[key],
-    #            color="".join([random.choice("ABCDEF0123456789") for i in range(6)]),  # nosec
-    #        )
-
 
 def aci_create_manufacturer(apps, **kwargs):
     """Add manufacturer."""
@@ -59,27 +51,21 @@ def aci_create_manufacturer(apps, **kwargs):
         name=PLUGIN_CFG.get("manufacturer_name"),
     )
 
-
-def aci_create_site(apps, **kwargs):
+def aci_create_location_type(apps, **kwargs):
     """Add site."""
     ContentType = apps.get_model("contenttypes", "ContentType")
+    Controller = apps.get_model("dcim", "Controller")
+    Rack = apps.get_model("dcim", "Rack")
     Device = apps.get_model("dcim", "Device")
-    Site = apps.get_model("dcim", "Location")
+    Namespace = apps.get_model("ipam", "Namespace")
     Prefix = apps.get_model("ipam", "Prefix")
     Vlan = apps.get_model("ipam", "VLAN")
-    location_type = apps.get_model("dcim", "LocationType")
-    status = apps.get_model("extras", "Status")
-    apics = PLUGIN_CFG.get("apics")
-    loc_type = location_type.objects.update_or_create(name="Site")[0]
-    loc_type.content_types.add(ContentType.objects.get_for_model(Device))
-    loc_type.content_types.add(ContentType.objects.get_for_model(Prefix))
-    loc_type.content_types.add(ContentType.objects.get_for_model(Vlan))
-    active_status = status.objects.update_or_create(name="Active")[0]
-    for key in apics:
-        if "SITE" in key:
-            logger.info(f"Creating Site: {apics[key]}")
-            Site.objects.update_or_create(name=apics[key], location_type=loc_type, status=active_status)
+    LocationType = apps.get_model("dcim", "LocationType")
+    
+    loc_type = LocationType.objects.update_or_create(name="Datacenter")[0]
 
+    for model in [Controller, Rack, Device, Namespace, Prefix, Vlan]:
+        loc_type.content_types.add(ContentType.objects.get_for_model(model))
 
 def device_custom_fields(apps, **kwargs):
     """Creating custom fields for interfaces."""

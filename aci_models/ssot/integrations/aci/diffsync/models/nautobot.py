@@ -190,7 +190,7 @@ class NautobotDevice(Device):
             serial=attrs["serial"],
             comments=attrs["comments"],
             controller_managed_device_group=ControllerManagedDeviceGroup.objects.get(name=attrs["controller_group"]),
-            location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Site")),
+            location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Datacenter")),
             status=Status.objects.get(name="Active"),
         )
 
@@ -205,7 +205,7 @@ class NautobotDevice(Device):
         """Update Device object in Nautobot."""
         _device = OrmDevice.objects.get(
             name=self.name,
-            location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Site")),
+            location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Datacenter")),
         )
         if attrs.get("serial"):
             _device.serial = attrs["serial"]
@@ -232,7 +232,7 @@ class NautobotDevice(Device):
         super().delete()
         _device = OrmDevice.objects.get(
             name=self.name,
-            location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Site")),
+            location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Datacenter")),
         )
         self.adapter.objects_to_delete["device"].append(_device)  # pylint: disable=protected-access
         return self
@@ -286,7 +286,7 @@ class NautobotInterface(Interface):
             name=ids["name"],
             device=OrmDevice.objects.get(
                 name=ids["device"],
-                location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Site")),
+                location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Datacenter")),
             ),
             description=attrs["description"],
             status=Status.objects.get(name="Active") if attrs["state"] == "up" else Status.objects.get(name="Failed"),
@@ -310,7 +310,7 @@ class NautobotInterface(Interface):
             name=self.name,
             device=OrmDevice.objects.get(
                 name=self.device,
-                location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Site")),
+                location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Datacenter")),
             ),
         )
         if attrs.get("description"):
@@ -340,7 +340,7 @@ class NautobotInterface(Interface):
         try:
             device = OrmDevice.objects.get(
                 name=self.device,
-                location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Site")),
+                location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Datacenter")),
             )
         except OrmDevice.DoesNotExist:
             self.adapter.job.logger.warning(
@@ -410,7 +410,7 @@ class NautobotIPAddress(IPAddress):
         if attrs["device"]:
             device = OrmDevice.objects.get(
                 name=_device,
-                location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Site")),
+                location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Datacenter")),
             )
             device.primary_ip4 = OrmIPAddress.objects.get(address=ids["address"])
             device.save()
@@ -481,7 +481,7 @@ class NautobotPrefix(Prefix):
             description=attrs["description"],
             namespace=Namespace.objects.get(name=attrs["namespace"]),
             tenant=OrmTenant.objects.get(name=attrs["vrf_tenant"]),
-            location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Site")),
+            location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Datacenter")),
         )
 
         if not created:
