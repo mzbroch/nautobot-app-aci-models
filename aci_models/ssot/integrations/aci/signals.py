@@ -20,7 +20,6 @@ def register_signals(sender):
     """Registers signals."""
     nautobot_database_ready.connect(aci_create_tag, sender=sender)
     nautobot_database_ready.connect(aci_create_manufacturer, sender=sender)
-    nautobot_database_ready.connect(aci_create_location_type, sender=sender)
     nautobot_database_ready.connect(device_custom_fields, sender=sender)
     nautobot_database_ready.connect(interface_custom_fields, sender=sender)
 
@@ -64,22 +63,6 @@ def aci_create_manufacturer(apps, **kwargs):
     manufacturer.objects.update_or_create(
         name=PLUGIN_CFG.get("manufacturer_name"),
     )
-
-def aci_create_location_type(apps, **kwargs):
-    """Add site."""
-    ContentType = apps.get_model("contenttypes", "ContentType")
-    Controller = apps.get_model("dcim", "Controller")
-    Rack = apps.get_model("dcim", "Rack")
-    Device = apps.get_model("dcim", "Device")
-    Namespace = apps.get_model("ipam", "Namespace")
-    Prefix = apps.get_model("ipam", "Prefix")
-    Vlan = apps.get_model("ipam", "VLAN")
-    LocationType = apps.get_model("dcim", "LocationType")
-    
-    loc_type = LocationType.objects.update_or_create(name="Datacenter")[0]
-
-    for model in [Controller, Rack, Device, Namespace, Prefix, Vlan]:
-        loc_type.content_types.add(ContentType.objects.get_for_model(model))
 
 def device_custom_fields(apps, **kwargs):
     """Creating custom fields for interfaces."""

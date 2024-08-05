@@ -73,7 +73,7 @@ class NautobotAdapter(Adapter):
         "aci_apptermination",
     ]
 
-    def __init__(self, *args, job=None, sync=None, site_name: str, controller_tag, **kwargs):
+    def __init__(self, *args, job=None, sync=None, site_name: str, site_type: str, controller_tag: str, **kwargs):
         """Initialize Nautobot.
 
         Args:
@@ -85,6 +85,7 @@ class NautobotAdapter(Adapter):
         self.job = job
         self.sync = sync
         self.site = site_name
+        self.site_type = site_type
         self.controller_tag = controller_tag
 
     def sync_complete(self, source: Adapter, *args, **kwargs):
@@ -143,8 +144,8 @@ class NautobotAdapter(Adapter):
 
     def load_devicetypes(self):
         """Method to load Device Types from Nautobot."""
-        _tag = Tag.objects.get(name=PLUGIN_CFG.get("tag", "SoR:CiscoACI"))
-        for nbdevicetype in DeviceType.objects.filter(tags=_tag):
+        sor_tag = PLUGIN_CFG.get("tag", "SoR:CiscoACI")
+        for nbdevicetype in DeviceType.objects.filter(tags__name=sor_tag):
             _devicetype = self.device_type(
                 model=nbdevicetype.model,
                 part_nbr=nbdevicetype.part_number,

@@ -49,13 +49,22 @@ class NautobotTenant(Tenant):
     def create(cls, adapter, ids, attrs):
         """Create Tenant object in Nautobot."""
         _tenant = OrmTenant(name=ids["name"], description=attrs["description"], comments=attrs["comments"])
+        sor_tag, controller_tag = (
+            Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
+            Tag.objects.get(name=attrs["controller_tag"]),
+        )
         if attrs["msite_tag"]:
             _tenant.tags.add(Tag.objects.get(name="ACI_MULTISITE"))
-        _tenant.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag")))
-        _tenant.tags.add(Tag.objects.get(name=attrs["controller_tag"]))
+        _tenant.tags.add(sor_tag)
+        _tenant.tags.add(controller_tag)
         _tenant.validated_save()
 
-        Namespace.objects.get_or_create(name=ids["name"])
+        _namespace, _created = Namespace.objects.get_or_create(name=ids["name"])
+        if _created:
+            _namespace.tags.add(sor_tag)
+            _namespace.tags.add(controller_tag)
+            _namespace.validated_save()
+
         return super().create(ids=ids, adapter=adapter, attrs=attrs)
 
     def update(self, attrs):
@@ -82,9 +91,13 @@ class NautobotVrf(Vrf):
     def create(cls, adapter, ids, attrs):
         """Create VRF object in Nautobot."""
         _tenant = OrmTenant.objects.get(name=ids["tenant"])
+        sor_tag, controller_tag = (
+            Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
+            Tag.objects.get(name=attrs["controller_tag"]),
+        )
         _vrf = OrmVrf(name=ids["name"], tenant=_tenant, namespace=Namespace.objects.get(name=attrs["namespace"]))
-        _vrf.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag")))
-        _vrf.tags.add(Tag.objects.get(name=attrs["controller_tag"]))
+        _vrf.tags.add(sor_tag)
+        _vrf.tags.add(controller_tag)
         _vrf.validated_save()
         return super().create(ids=ids, adapter=adapter, attrs=attrs)
 
@@ -124,8 +137,8 @@ class NautobotDeviceType(DeviceType):
             u_height=attrs["u_height"],
             comments=attrs["comments"],
         )
-        _tag = Tag.objects.get(name=PLUGIN_CFG.get("tag"))
-        _devicetype.tags.add(_tag)
+        sor_tag = Tag.objects.get(name=PLUGIN_CFG.get("tag", ""))
+        _devicetype.tags.add(sor_tag)
         _devicetype.validated_save()
 
         return super().create(ids=ids, adapter=adapter, attrs=attrs)
@@ -190,14 +203,18 @@ class NautobotDevice(Device):
             serial=attrs["serial"],
             comments=attrs["comments"],
             controller_managed_device_group=ControllerManagedDeviceGroup.objects.get(name=attrs["controller_group"]),
-            location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Datacenter")),
+            location=Location.objects.get(name=ids["site"], location_type__name=adapter.site_type),
             status=Status.objects.get(name="Active"),
         )
-
+        sor_tag, controller_tag = (
+            Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
+            Tag.objects.get(name=attrs["controller_tag"]),
+        )
         _device.custom_field_data["aci_node_id"] = attrs["node_id"]
         _device.custom_field_data["aci_pod_id"] = attrs["pod_id"]
-        _device.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag")))
-        _device.tags.add(Tag.objects.get(name=attrs["controller_tag"]))
+        
+        _device.tags.add(sor_tag)
+        _device.tags.add(controller_tag)
         _device.validated_save()
         return super().create(ids=ids, adapter=adapter, attrs=attrs)
 
@@ -205,7 +222,7 @@ class NautobotDevice(Device):
         """Update Device object in Nautobot."""
         _device = OrmDevice.objects.get(
             name=self.name,
-            location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Datacenter")),
+            location=Location.objects.get(name=self.site, location_type__name=self.adapter.site_type),
         )
         if attrs.get("serial"):
             _device.serial = attrs["serial"]
@@ -232,7 +249,7 @@ class NautobotDevice(Device):
         super().delete()
         _device = OrmDevice.objects.get(
             name=self.name,
-            location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Datacenter")),
+            location=Location.objects.get(name=self.site, location_type__name=self.adapter.site_type),
         )
         self.adapter.objects_to_delete["device"].append(_device)  # pylint: disable=protected-access
         return self
@@ -286,7 +303,7 @@ class NautobotInterface(Interface):
             name=ids["name"],
             device=OrmDevice.objects.get(
                 name=ids["device"],
-                location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Datacenter")),
+                location=Location.objects.get(name=ids["site"], location_type__name=adapter.site_type),
             ),
             description=attrs["description"],
             status=Status.objects.get(name="Active") if attrs["state"] == "up" else Status.objects.get(name="Failed"),
@@ -300,7 +317,12 @@ class NautobotInterface(Interface):
             _interface.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag_up")))
         else:
             _interface.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag_down")))
-        _interface.tags.add(Tag.objects.get(name=attrs["controller_tag"]))
+        sor_tag, controller_tag = (
+            Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
+            Tag.objects.get(name=attrs["controller_tag"]),
+        )
+        _interface.tags.add(sor_tag)
+        _interface.tags.add(controller_tag)
         _interface.validated_save()
         return super().create(ids=ids, adapter=adapter, attrs=attrs)
 
@@ -310,7 +332,7 @@ class NautobotInterface(Interface):
             name=self.name,
             device=OrmDevice.objects.get(
                 name=self.device,
-                location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Datacenter")),
+                location=Location.objects.get(name=self.site, location_type__name=self.adapter.site_type),
             ),
         )
         if attrs.get("description"):
@@ -340,7 +362,7 @@ class NautobotInterface(Interface):
         try:
             device = OrmDevice.objects.get(
                 name=self.device,
-                location=Location.objects.get(name=self.site, location_type=LocationType.objects.get(name="Datacenter")),
+                location=Location.objects.get(name=self.site, location_type__name=self.adapter.site_type),
             )
         except OrmDevice.DoesNotExist:
             self.adapter.job.logger.warning(
@@ -403,14 +425,18 @@ class NautobotIPAddress(IPAddress):
         if intf:
             mapping = IPAddressToInterface.objects.create(ip_address=_ipaddress, interface=intf)
             mapping.validated_save()
-        _ipaddress.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag")))
-        _ipaddress.tags.add(Tag.objects.get(name=attrs["controller_tag"]))
+        sor_tag, controller_tag = (
+            Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
+            Tag.objects.get(name=attrs["controller_tag"]),
+        )
+        _ipaddress.tags.add(sor_tag)
+        _ipaddress.tags.add(controller_tag)
         _ipaddress.validated_save()
         # Update device with newly created address in the "Primary IPv4 field"
         if attrs["device"]:
             device = OrmDevice.objects.get(
                 name=_device,
-                location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Datacenter")),
+                location=Location.objects.get(name=ids["site"], location_type__name=adapter.site_type),
             )
             device.primary_ip4 = OrmIPAddress.objects.get(address=ids["address"])
             device.save()
@@ -481,7 +507,7 @@ class NautobotPrefix(Prefix):
             description=attrs["description"],
             namespace=Namespace.objects.get(name=attrs["namespace"]),
             tenant=OrmTenant.objects.get(name=attrs["vrf_tenant"]),
-            location=Location.objects.get(name=ids["site"], location_type=LocationType.objects.get(name="Datacenter")),
+            location=Location.objects.get(name=ids["site"], location_type__name=adapter.site_type),
         )
 
         if not created:
@@ -491,8 +517,12 @@ class NautobotPrefix(Prefix):
             return None
         if vrf:
             _prefix.vrfs.add(vrf)
-        _prefix.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag")))
-        _prefix.tags.add(Tag.objects.get(name=attrs["controller_tag"]))
+        sor_tag, controller_tag = (
+            Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
+            Tag.objects.get(name=attrs["controller_tag"]),
+        )
+        _prefix.tags.add(sor_tag)
+        _prefix.tags.add(controller_tag)
         _prefix.validated_save()
         return super().create(ids=ids, adapter=adapter, attrs=attrs)
 
@@ -544,8 +574,12 @@ class NautobotApplicationProfile(ApplicationProfile):
         """Create AP object in Nautobot."""
         _tenant = OrmTenant.objects.get(name=ids["tenant"])
         _appprofile = OrmApplicationProfile(name=ids["name"], tenant=_tenant, description=attrs["description"])
-        _appprofile.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag")))
-        _appprofile.tags.add(Tag.objects.get(name=attrs["controller_tag"]))
+        sor_tag, controller_tag = (
+            Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
+            Tag.objects.get(name=attrs["controller_tag"]),
+        )
+        _appprofile.tags.add(sor_tag)
+        _appprofile.tags.add(controller_tag)
         if adapter.job.debug:
             adapter.job.logger.debug(f"App Profile Created for tenant: {_tenant}")
         _appprofile.validated_save()
@@ -629,9 +663,12 @@ class NautobotBridgeDomain(BridgeDomain):
                 )
                 continue
             _bd.ip_addresses.add(_ip_address)
-
-        _bd.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag")))
-        _bd.tags.add(Tag.objects.get(name=attrs["controller_tag"]))
+        sor_tag, controller_tag = (
+            Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
+            Tag.objects.get(name=attrs["controller_tag"]),
+        )
+        _bd.tags.add(sor_tag)
+        _bd.tags.add(controller_tag)
         return super().create(ids=ids, adapter=adapter, attrs=attrs)
 
     def update(self, attrs):
@@ -735,8 +772,12 @@ class NautobotEPG(EPG):
             bridge_domain=_bd,
             description=attrs["description"],
         )
-        _epg.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag")))
-        _epg.tags.add(Tag.objects.get(name=attrs["controller_tag"]))
+        sor_tag, controller_tag = (
+            Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
+            Tag.objects.get(name=attrs["controller_tag"]),
+        )
+        _epg.tags.add(sor_tag)
+        _epg.tags.add(controller_tag)
         _epg.validated_save()
         return super().create(ids=ids, adapter=adapter, attrs=attrs)
 
@@ -820,7 +861,10 @@ class NautobotApplicationTermination(ApplicationTermination):
                 msg=f"Cannot create Path: {ids['interface']['device']}:{ids['interface']['name']}:{ids['vlan']}. Interface does not exist."
             )
             return
-
+        sor_tag, controller_tag = (
+            Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
+            Tag.objects.get(name=attrs["controller_tag"]),
+        )
         _vlan_id = ids["vlan"]
         _description = attrs["description"]
         _controller_tag = attrs["controller_tag"]
@@ -832,8 +876,8 @@ class NautobotApplicationTermination(ApplicationTermination):
             status=Status.objects.get(name="Active"),
         )
         if _created:
-            _vlan.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag")))
-            _vlan.tags.add(Tag.objects.get(name=_controller_tag))
+            _vlan.tags.add(sor_tag)
+            _vlan.tags.add(controller_tag)
             _vlan.validated_save()
             adapter.job.logger.info(
                 msg=f"Created VLAN: {_vlan_id} for EPG Path: {_interface.device.name}:{_interface.name}:{_vlan_id}"
@@ -846,8 +890,8 @@ class NautobotApplicationTermination(ApplicationTermination):
             vlan=_vlan,
             description=_description,
         )
-        _epgpath.tags.add(Tag.objects.get(name=PLUGIN_CFG.get("tag")))
-        _epgpath.tags.add(Tag.objects.get(name=_controller_tag))
+        _epgpath.tags.add(sor_tag)
+        _epgpath.tags.add(controller_tag)
         if adapter.job.debug:
             adapter.job.logger.debug(msg=f"Created EPG Path: {_interface.device.name}:{_interface.name}:{_vlan_id}")
         _epgpath.validated_save()

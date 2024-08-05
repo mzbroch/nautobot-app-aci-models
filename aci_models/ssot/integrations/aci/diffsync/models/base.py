@@ -262,6 +262,6 @@ class ApplicationTermination(DiffSyncModel):
     name: Optional[str]
     epg: Dict
     interface: Dict
-    vlan: str
+    vlan: int
     description: Optional[str]
     controller_tag: str

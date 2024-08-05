@@ -101,6 +101,7 @@ class AciDataSource(DataSource, Job):  # pylint: disable=abstract-method, too-ma
         self.target_adapter = NautobotAdapter(
             job=self, sync=self.sync,
             site_name=self.device_site.name if self.device_site else self.apic.location.name,
+            site_type=self.device_site.location_type.name if self.device_site else self.apic.location.location_type.name,
             controller_tag=self.apic.external_integration.extra_config.get("tag"),
         )
         self.target_adapter.load()
