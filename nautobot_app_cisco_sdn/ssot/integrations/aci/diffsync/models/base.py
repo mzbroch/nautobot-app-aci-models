@@ -1,7 +1,7 @@
 """Base Shared Models for Cisco ACI integration with SSoT app."""
 
-from typing import List, Optional, Dict
-from pydantic import ConfigDict
+from typing import Dict, List, Optional
+
 from diffsync import DiffSyncModel
 
 
@@ -61,7 +61,7 @@ class DeviceType(DiffSyncModel):
 
 class DeviceRole(DiffSyncModel):
     """DeviceRole model for DiffSync."""
-    
+
     _modelname = "device_role"
     _identifiers = ("name",)
     _attributes = ("description",)

@@ -2,16 +2,15 @@
 
 from django.templatetags.static import static
 from django.urls import reverse
-from diffsync.enum import DiffSyncFlags
-from nautobot.core.settings_funcs import is_truthy
 from nautobot.dcim.models import Controller, Location
-from nautobot.extras.jobs import BooleanVar, ChoiceVar, Job, ObjectVar
+from nautobot.extras.jobs import BooleanVar, Job, ObjectVar
 from nautobot_ssot.jobs.base import DataMapping, DataSource
+from nautobot_ssot.utils import get_username_password_https_from_secretsgroup, verify_controller_managed_device_group
+
+from nautobot_app_cisco_sdn.ssot.integrations.aci.constant import HAS_NAUTOBOT_APP_CISCO_SDN
 from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.adapters.aci import AciAdapter
 from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.adapters.nautobot import NautobotAdapter
 from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.client import AciApi
-from nautobot_app_cisco_sdn.ssot.integrations.aci.constant import PLUGIN_CFG, HAS_NAUTOBOT_APP_CISCO_SDN
-from nautobot_ssot.utils import get_username_password_https_from_secretsgroup, verify_controller_managed_device_group
 
 name = "Cisco ACI SSoT"  # pylint: disable=invalid-name, abstract-method
 
@@ -106,7 +105,7 @@ class AciDataSource(DataSource, Job):  # pylint: disable=abstract-method, too-ma
         )
         self.target_adapter.load()
 
-    def run(  # pylint: disable=arguments-differ, too-many-arguments
+    def run(  # pylint: disable=arguments-differ, too-many-arguments # noqa: PLR0913
         self, dryrun, memory_profiling, apic, device_site, debug, *args, **kwargs
     ):
         """Perform data synchronization."""

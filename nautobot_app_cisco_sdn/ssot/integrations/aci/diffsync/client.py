@@ -1,30 +1,27 @@
 """All interactions with ACI."""  # pylint: disable=too-many-lines, too-many-instance-attributes, too-many-arguments
 
 # pylint: disable=invalid-name
-from copy import deepcopy
-from datetime import datetime, timedelta
-from ipaddress import ip_network
-
 import itertools
 import logging
 import re
 import sys
+from copy import deepcopy
+from datetime import datetime, timedelta
+from ipaddress import ip_network
 
 import requests
 import urllib3
 
 from .utils import (
-    tenant_from_dn,
     ap_from_dn,
-    node_from_dn,
-    pod_from_dn,
+    bd_from_dn,
+    epg_from_dn,
     fex_id_from_dn,
     interface_from_dn,
-    epg_from_dn,
-    bd_from_dn,
+    node_from_dn,
+    pod_from_dn,
+    tenant_from_dn,
 )
-from copy import deepcopy
-
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -42,7 +39,7 @@ class RequestHTTPError(Exception):
 class AciApi:
     """Representation and methods for interacting with aci."""
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         username,
         password,
@@ -420,10 +417,10 @@ class AciApi:
         resp = self._get('/api/class/topSystem.json?query-target-filter=ne(topSystem.role,"controller")')
 
         for node in resp.json()["imdata"]:
-            if node["topSystem"]["attributes"]["oobMgmtAddr"] != "0.0.0.0":  # nosec: B104
+            if node["topSystem"]["attributes"]["oobMgmtAddr"] != "0.0.0.0":  # nosec: B104 # noqa: S104
                 mgmt_addr = f"{node['topSystem']['attributes']['oobMgmtAddr']}/{node['topSystem']['attributes']['oobMgmtAddrMask']}"
             elif (
-                node["topSystem"]["attributes"]["address"] != "0.0.0.0"  # nosec: B104
+                node["topSystem"]["attributes"]["address"] != "0.0.0.0"  # nosec: B104 # noqa: S104
                 and node["topSystem"]["attributes"]["tepPool"]
             ):
                 mgmt_addr = f"{node['topSystem']['attributes']['address']}/{ip_network(node['topSystem']['attributes']['tepPool'], strict=False).prefixlen}"
@@ -431,11 +428,11 @@ class AciApi:
                 mgmt_addr = ""
             if mgmt_addr:
                 subnet = ip_network(mgmt_addr, strict=False).with_prefixlen
-            elif node["topSystem"]["attributes"]["tepPool"] != "0.0.0.0":  # nosec: B104
+            elif node["topSystem"]["attributes"]["tepPool"] != "0.0.0.0":  # nosec: B104 # noqa: S104
                 subnet = node["topSystem"]["attributes"]["tepPool"]
             else:
                 subnet = ""
-            # if node["topSystem"]["attributes"]["tepPool"] != "0.0.0.0":  # nosec: B104
+            # if node["topSystem"]["attributes"]["tepPool"] != "0.0.0.0":  # nosec: B104 # noqa: S104
             #    subnet = node["topSystem"]["attributes"]["tepPool"]
             # elif mgmt_addr:
             #    subnet = ip_network(mgmt_addr, strict=False).with_prefixlen
@@ -479,10 +476,10 @@ class AciApi:
             node_dict[node_id]["site"] = self.site
         resp = self._get('/api/class/topSystem.json?query-target-filter=eq(topSystem.role,"controller")')
         for node in resp.json()["imdata"]:
-            if node["topSystem"]["attributes"]["oobMgmtAddr"] != "0.0.0.0":  # nosec: B104
+            if node["topSystem"]["attributes"]["oobMgmtAddr"] != "0.0.0.0":  # nosec: B104 # noqa: S104
                 mgmt_addr = f"{node['topSystem']['attributes']['oobMgmtAddr']}/{node['topSystem']['attributes']['oobMgmtAddrMask']}"
             elif (
-                node["topSystem"]["attributes"]["address"] != "0.0.0.0"  # nosec: B104
+                node["topSystem"]["attributes"]["address"] != "0.0.0.0"  # nosec: B104 # noqa: S104
                 and node["topSystem"]["attributes"]["tepPool"]
             ):
                 mgmt_addr = f"{node['topSystem']['attributes']['address']}/{ip_network(node['topSystem']['attributes']['tepPool'], strict=False).prefixlen}"
@@ -490,11 +487,11 @@ class AciApi:
                 mgmt_addr = ""
             if mgmt_addr:
                 subnet = ip_network(mgmt_addr, strict=False).with_prefixlen
-            elif node["topSystem"]["attributes"]["tepPool"] != "0.0.0.0":  # nosec: B104
+            elif node["topSystem"]["attributes"]["tepPool"] != "0.0.0.0":  # nosec: B104 # noqa: S104
                 subnet = node["topSystem"]["attributes"]["tepPool"]
             else:
                 subnet = ""
-            # if node["topSystem"]["attributes"]["tepPool"] != "0.0.0.0":  # nosec: B104
+            # if node["topSystem"]["attributes"]["tepPool"] != "0.0.0.0":  # nosec: B104 # noqa: S104
             #    subnet = node["topSystem"]["attributes"]["tepPool"]
             # elif mgmt_addr:
             #    subnet = ip_network(mgmt_addr, strict=False).with_prefixlen
@@ -511,7 +508,7 @@ class AciApi:
         """Return list of Leaf/Spine nodes which are pending registration."""
         resp = self._get(
             "/api/node/class/dhcpClient.json?query-target-filter"
-            '=and(not(wcard(dhcpClient.dn,"__ui_")),and(or(eq(dhcpClient.ip,"0.0.0.0")),'
+            '=and(not(wcard(dhcpClient.dn,"__ui_")),and(or(eq(dhcpClient.ip,"0.0.0.0")),' # noqa: S104
             'or(eq(dhcpClient.nodeRole,"spine"),eq(dhcpClient.nodeRole,"leaf"),eq(dhcpClient.nodeRole,"unsupported"))))'
         )
 
@@ -536,7 +533,7 @@ class AciApi:
             intf_dict[item] = {}
 
         for intf in resp.json()["imdata"]:
-            if int(fex_id_from_dn(intf["l1PhysIf"]["attributes"]["dn"])) < 100:
+            if int(fex_id_from_dn(intf["l1PhysIf"]["attributes"]["dn"])) < 100: # noqa: PLR2004
                 switch_id = node_from_dn(intf["l1PhysIf"]["attributes"]["dn"])
             else:
                 switch_id = node_from_dn(intf["l1PhysIf"]["attributes"]["dn"]) + fex_id_from_dn(
@@ -621,7 +618,7 @@ class AciApi:
     def get_static_path_all(self) -> list:
         """Return static path mapping details for an EPG."""
         resp = self._get(
-            f'/api/node/class/fvStPathAtt.json?query-target=subtree&target-subtree-class=fvIfConn&query-target-filter=wcard(fvIfConn.dn,"fv-")'
+            '/api/node/class/fvStPathAtt.json?query-target=subtree&target-subtree-class=fvIfConn&query-target-filter=wcard(fvIfConn.dn,"fv-")'
         )
         sp_list = []
         node_list = self.get_nodes()

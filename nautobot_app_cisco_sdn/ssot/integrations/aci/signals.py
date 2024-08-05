@@ -2,15 +2,14 @@
 
 # pylint: disable=logging-fstring-interpolation, invalid-name
 import logging
-import random
 
-from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.dispatch import receiver
 from nautobot.core.signals import nautobot_database_ready
-from nautobot.extras.choices import CustomFieldTypeChoices
-
 from nautobot.dcim.models.devices import Controller
+from nautobot.extras.choices import CustomFieldTypeChoices
 from nautobot.extras.models import Tag
+
 from nautobot_app_cisco_sdn.ssot.integrations.aci.constant import PLUGIN_CFG
 
 logger = logging.getLogger("nautobot.ssot.aci")
@@ -25,6 +24,14 @@ def register_signals(sender):
 
 @receiver(post_save, sender=Controller)
 def controller_created(sender, instance, created, **kwargs):
+    """Function controller_created adds ctag with every new controller.
+
+    Args:
+        sender (_type_): _description_
+        instance (_type_): _description_
+        created (_type_): _description_
+        **kwargs (_type_): _description_
+    """
     if created and instance.external_integration:
         extra_config = instance.external_integration.extra_config
         if "tag" in extra_config.keys():
@@ -32,7 +39,7 @@ def controller_created(sender, instance, created, **kwargs):
             Tag.objects.update_or_create(
                 name=extra_config.get("tag"),
                 color=PLUGIN_CFG.get("tag_color"),
-            )           
+            )
 
 def aci_create_tag(apps, **kwargs):
     """Add a tag."""

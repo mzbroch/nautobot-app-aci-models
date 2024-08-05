@@ -3,9 +3,10 @@
 # Metadata is inherited from Nautobot. If not including Nautobot in the environment, this should be added
 from importlib import metadata
 
+from nautobot.apps import NautobotAppConfig
+
 from nautobot_app_cisco_sdn.ssot.integrations.utils import each_enabled_integration_module
 from nautobot_app_cisco_sdn.utils import logger
-from nautobot.apps import NautobotAppConfig
 
 __version__ = metadata.version(__name__)
 

@@ -1,19 +1,19 @@
 """Initialize models for Nautobot and ACI."""
 
 from .nautobot import (
-    NautobotTenant,
-    NautobotVrf,
+    NautobotApplicationProfile,
+    NautobotApplicationTermination,
+    NautobotBridgeDomain,
     NautobotDevice,
     NautobotDeviceRole,
     NautobotDeviceType,
-    NautobotInterfaceTemplate,
-    NautobotInterface,
-    NautobotPrefix,
-    NautobotIPAddress,
-    NautobotApplicationProfile,
-    NautobotBridgeDomain,
     NautobotEPG,
-    NautobotApplicationTermination,
+    NautobotInterface,
+    NautobotInterfaceTemplate,
+    NautobotIPAddress,
+    NautobotPrefix,
+    NautobotTenant,
+    NautobotVrf,
 )
 
 __all__ = [

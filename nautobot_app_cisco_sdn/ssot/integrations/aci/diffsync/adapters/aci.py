@@ -6,27 +6,29 @@
 import logging
 import os
 import re
-from typing import Optional
 from ipaddress import ip_network
+from typing import Optional
+
 from diffsync import Adapter
 from diffsync.exceptions import ObjectNotFound
-from nautobot_app_cisco_sdn.ssot.integrations.aci.constant import PLUGIN_CFG, HAS_NAUTOBOT_APP_CISCO_SDN
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotTenant
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotVrf
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotDeviceType
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotDeviceRole
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotDevice
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotInterfaceTemplate
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotInterface
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotIPAddress
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotPrefix
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotApplicationProfile
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotBridgeDomain
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotEPG
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotApplicationTermination
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.client import AciApi
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.utils import load_yamlfile
 
+from nautobot_app_cisco_sdn.ssot.integrations.aci.constant import HAS_NAUTOBOT_APP_CISCO_SDN, PLUGIN_CFG
+from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import (
+    NautobotApplicationProfile,
+    NautobotApplicationTermination,
+    NautobotBridgeDomain,
+    NautobotDevice,
+    NautobotDeviceRole,
+    NautobotDeviceType,
+    NautobotEPG,
+    NautobotInterface,
+    NautobotInterfaceTemplate,
+    NautobotIPAddress,
+    NautobotPrefix,
+    NautobotTenant,
+    NautobotVrf,
+)
+from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.utils import load_yamlfile
 
 logger = logging.getLogger(__name__)
 
@@ -64,13 +66,17 @@ class AciAdapter(Adapter):
         "aci_apptermination",
     ]
 
-    def __init__(self, *args, job=None, sync=None, client, tenant_prefix, controller_tag, **kwargs):
+    def __init__(self, *args, job=None, sync=None, client, tenant_prefix, controller_tag, **kwargs):  # noqa: PLR0913
         """Initialize ACI.
 
         Args:
             job (object, optional): Aci job. Defaults to None.
             sync (object, optional): Aci DiffSync. Defaults to None.
             client (object): Aci credentials.
+            tenant_prefix: Prefix for Tenants
+            controller_tag: Tag for objects owned by this controller.
+            *args: Optional.
+            **kwargs: Optional.
         """
         super().__init__(*args, **kwargs)
         self.job = job
@@ -88,7 +94,7 @@ class AciAdapter(Adapter):
         """Load tenants from ACI."""
         tenant_list = self.conn.get_tenants()
         for _tenant in tenant_list:
-            if not _tenant["name"] in PLUGIN_CFG.get("ignore_tenants"):
+            if _tenant["name"] not in PLUGIN_CFG.get("ignore_tenants"):
                 tenant_name = f"{self.tenant_prefix}:{_tenant['name']}"
                 if ":mso" in _tenant.get("annotation").lower():  # pylint: disable=simplifiable-if-statement
                     _msite_tag = True
@@ -120,7 +126,7 @@ class AciAdapter(Adapter):
             if _vrf["tenant"] not in PLUGIN_CFG.get("ignore_tenants"):
                 self.add(new_vrf)
 
-    def load_subnet_as_prefix(
+    def load_subnet_as_prefix(  # noqa: PLR0913
         self, prefix: str, namespace: str, site: str, vrf: str, vrf_tenant: str, tenant: Optional[str] = None
     ):
         """Load Subnet into prefix DiffSync model."""
@@ -141,7 +147,7 @@ class AciAdapter(Adapter):
             self.add(new_pf)
 
     # pylint: disable-next=too-many-branches
-    def load_ipaddresses(self):
+    def load_ipaddresses(self):  # noqa: PLR0912
         """Load IPAddresses from ACI. Retrieves controller IPs, OOB Mgmt IP of leaf/spine, and Bridge Domain subnet IPs."""
         node_dict = self.conn.get_nodes()
         # Leaf/Spine management IP addresses
@@ -473,7 +479,7 @@ class AciAdapter(Adapter):
                         self.job.logger.info(msg=f"Loading Application Profile from APIC {new_ap}")
                     self.add(new_ap)
 
-    def load_bridgedomains(self):
+    def load_bridgedomains(self):  # noqa: PLR0912
         """Load Bridge domains from ACI."""
         bd_dict = self.conn.get_bds(tenant="all")
         # pylint: disable-next=too-many-nested-blocks

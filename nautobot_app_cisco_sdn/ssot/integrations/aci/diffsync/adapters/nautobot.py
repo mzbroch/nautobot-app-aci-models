@@ -4,35 +4,39 @@
 
 import logging
 from collections import defaultdict
+
 from diffsync import Adapter
 from diffsync.enum import DiffSyncModelFlags
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import ProtectedError
-from nautobot.tenancy.models import Tenant
-from nautobot.dcim.models import DeviceType, Device, InterfaceTemplate, Interface
+from nautobot.dcim.models import Device, DeviceType, Interface, InterfaceTemplate
 from nautobot.extras.models import Role
-from nautobot.ipam.models import IPAddress, Prefix, VRF
-from nautobot.extras.models import Tag
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotTenant
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotVrf
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotDeviceType
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotDeviceRole
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotDevice
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotInterfaceTemplate
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotInterface
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotIPAddress
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotPrefix
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotApplicationProfile
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotBridgeDomain
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotEPG
-from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import NautobotApplicationTermination
-from nautobot_app_cisco_sdn.ssot.integrations.aci.constant import PLUGIN_CFG, HAS_NAUTOBOT_APP_CISCO_SDN
+from nautobot.ipam.models import VRF, IPAddress, Prefix
+from nautobot.tenancy.models import Tenant
+
+from nautobot_app_cisco_sdn.ssot.integrations.aci.constant import HAS_NAUTOBOT_APP_CISCO_SDN, PLUGIN_CFG
+from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models import (
+    NautobotApplicationProfile,
+    NautobotApplicationTermination,
+    NautobotBridgeDomain,
+    NautobotDevice,
+    NautobotDeviceRole,
+    NautobotDeviceType,
+    NautobotEPG,
+    NautobotInterface,
+    NautobotInterfaceTemplate,
+    NautobotIPAddress,
+    NautobotPrefix,
+    NautobotTenant,
+    NautobotVrf,
+)
+
 if HAS_NAUTOBOT_APP_CISCO_SDN:
     from nautobot_app_cisco_sdn.models import (
-        ApplicationProfile,
-        BridgeDomain,
         EPG,
+        ApplicationProfile,
         ApplicationTermination,
+        BridgeDomain,
     )
 
 logger = logging.getLogger(__name__)
@@ -73,13 +77,17 @@ class NautobotAdapter(Adapter):
         "aci_apptermination",
     ]
 
-    def __init__(self, *args, job=None, sync=None, site_name: str, site_type: str, controller_tag: str, **kwargs):
+    def __init__(self, *args, job=None, sync=None, site_name: str, site_type: str, controller_tag: str, **kwargs):  # noqa: PLR0913
         """Initialize Nautobot.
 
         Args:
             job (object, optional): Nautobot job. Defaults to None.
             sync (object, optional): Nautobot DiffSync. Defaults to None.
             site_name (str): Name of Site to filter objects on.
+            site_type (str): location type.
+            controller_tag (str): tag for controller created objects.
+            *args: None.
+            **kwargs: None.
         """
         super().__init__(*args, **kwargs)
         self.job = job
@@ -96,6 +104,8 @@ class NautobotAdapter(Adapter):
 
         Args:
             source (Adapter): DiffSync Adapter
+            *args: None.
+            **kwargs: None.
         """
         for grouping in (
             "aci_apptermination",

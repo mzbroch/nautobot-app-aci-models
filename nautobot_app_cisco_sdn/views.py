@@ -61,10 +61,27 @@ class ApplicationTerminationUIViewSet(NautobotUIViewSet):
 
 
 class DeviceAciApplicationProfilesView(generic.ObjectView):
+    """_summary_.
+
+    Args:
+        generic (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     queryset = Device.objects.all()
     template_name = "device_aci_application_profiles.html"
 
     def get_extra_context(self, request, instance):
+        """_summary_.
+
+        Args:
+            request (_type_): _description_
+            instance (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         terminations = models.ApplicationTermination.objects.filter(interface__device=instance)
         epgs = models.EPG.objects.filter(aci_appterminations__in=terminations)
         application_profiles = models.ApplicationProfile.objects.filter(
@@ -79,10 +96,27 @@ class DeviceAciApplicationProfilesView(generic.ObjectView):
 
 
 class DeviceAciApplicationTerminationsView(generic.ObjectView):
+    """_summary_.
+
+    Args:
+        generic (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     queryset = Device.objects.all()
     template_name = "device_aci_application_terminations.html"
 
     def get_extra_context(self, request, instance):
+        """_summary_.
+
+        Args:
+            request (_type_): _description_
+            instance (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         terminations = models.ApplicationTermination.objects.filter(interface__device=instance).order_by("interface__name")
         terminations_table = tables.ApplicationTerminationTable(data=terminations, user=request.user, orderable=True)
         terminations_table.columns.hide("device")

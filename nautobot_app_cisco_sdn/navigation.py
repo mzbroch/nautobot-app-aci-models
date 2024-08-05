@@ -52,6 +52,6 @@ items = (
 menu_items = (
     NavMenuTab(
         name="Apps",
-        groups=(NavMenuGroup(name="Cisco ACI Models", items=tuple(items)),),
+        groups=(NavMenuGroup(name="Nautobot App Cisco SDN", items=tuple(items)),),
     ),
 )

@@ -2,42 +2,43 @@
 
 import logging
 from ipaddress import ip_network
-from django.db import IntegrityError
+
 from django.contrib.contenttypes.models import ContentType
-from nautobot.tenancy.models import Tenant as OrmTenant
-from nautobot.dcim.models import ControllerManagedDeviceGroup
-from nautobot.dcim.models import DeviceType as OrmDeviceType
+from django.db import IntegrityError
+from nautobot.dcim.models import ControllerManagedDeviceGroup, Location, Manufacturer
 from nautobot.dcim.models import Device as OrmDevice
-from nautobot.dcim.models import InterfaceTemplate as OrmInterfaceTemplate
+from nautobot.dcim.models import DeviceType as OrmDeviceType
 from nautobot.dcim.models import Interface as OrmInterface
-from nautobot.dcim.models import Location, LocationType
-from nautobot.dcim.models import Manufacturer
-from nautobot.ipam.models import IPAddress as OrmIPAddress
-from nautobot.ipam.models import Namespace, IPAddressToInterface, VLAN
-from nautobot.ipam.models import Prefix as OrmPrefix
-from nautobot.ipam.models import VRF as OrmVrf
+from nautobot.dcim.models import InterfaceTemplate as OrmInterfaceTemplate
 from nautobot.extras.models import Role, Status, Tag
+from nautobot.ipam.models import VLAN, IPAddressToInterface, Namespace
+from nautobot.ipam.models import VRF as OrmVrf
+from nautobot.ipam.models import IPAddress as OrmIPAddress
+from nautobot.ipam.models import Prefix as OrmPrefix
+from nautobot.tenancy.models import Tenant as OrmTenant
+
+from nautobot_app_cisco_sdn.ssot.integrations.aci.constant import HAS_NAUTOBOT_APP_CISCO_SDN, PLUGIN_CFG
 from nautobot_app_cisco_sdn.ssot.integrations.aci.diffsync.models.base import (
-    Tenant,
-    Vrf,
-    DeviceType,
-    DeviceRole,
+    EPG,
+    ApplicationProfile,
+    ApplicationTermination,
+    BridgeDomain,
     Device,
-    InterfaceTemplate,
+    DeviceRole,
+    DeviceType,
     Interface,
+    InterfaceTemplate,
     IPAddress,
     Prefix,
-    ApplicationProfile,
-    BridgeDomain,
-    EPG,
-    ApplicationTermination,
+    Tenant,
+    Vrf,
 )
-from nautobot_app_cisco_sdn.ssot.integrations.aci.constant import PLUGIN_CFG, HAS_NAUTOBOT_APP_CISCO_SDN
+
 if HAS_NAUTOBOT_APP_CISCO_SDN:
-    from nautobot_app_cisco_sdn.models import ApplicationProfile as OrmApplicationProfile
-    from nautobot_app_cisco_sdn.models import BridgeDomain as OrmBridgeDomain
     from nautobot_app_cisco_sdn.models import EPG as OrmEPG
+    from nautobot_app_cisco_sdn.models import ApplicationProfile as OrmApplicationProfile
     from nautobot_app_cisco_sdn.models import ApplicationTermination as OrmApplicationTermination
+    from nautobot_app_cisco_sdn.models import BridgeDomain as OrmBridgeDomain
 
 logger = logging.getLogger(__name__)
 
@@ -212,7 +213,7 @@ class NautobotDevice(Device):
         )
         _device.custom_field_data["aci_node_id"] = attrs["node_id"]
         _device.custom_field_data["aci_pod_id"] = attrs["pod_id"]
-        
+
         _device.tags.add(sor_tag)
         _device.tags.add(controller_tag)
         _device.validated_save()

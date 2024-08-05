@@ -1,7 +1,6 @@
 """Django urlpatterns declaration for nautobot_app_cisco_sdn app."""
 
 from django.urls import path
-
 from nautobot.apps.urls import NautobotUIViewSetRouter
 
 from nautobot_app_cisco_sdn import views

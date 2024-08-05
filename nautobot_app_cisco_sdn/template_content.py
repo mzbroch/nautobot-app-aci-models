@@ -1,12 +1,26 @@
-from django.urls import reverse
+"""Adds additional content to native templates."""
 
+from django.urls import reverse
 from nautobot.apps.ui import TemplateExtension
 
 
 class DeviceContent(TemplateExtension):
+    """_summary_.
+
+    Args:
+        TemplateExtension (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     model = "dcim.device"
 
     def detail_tabs(self):
+        """_summary_.
+
+        Returns:
+            _type_: _description_
+        """
         return [
             {
                 "title": "ACI App Profiles",
