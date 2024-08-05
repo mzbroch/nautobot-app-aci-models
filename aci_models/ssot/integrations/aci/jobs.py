@@ -92,13 +92,16 @@ class AciDataSource(DataSource, Job):  # pylint: disable=abstract-method, too-ma
             sync=self.sync,
             client=client,
             tenant_prefix=self.apic.external_integration.extra_config.get("tenant_prefix"),
+            controller_tag=self.apic.external_integration.extra_config.get("tag"),
         )
         self.source_adapter.load()
 
     def load_target_adapter(self):
         """Method to instantiate and load the Nautobot adapter into `self.target_adapter`."""
         self.target_adapter = NautobotAdapter(
-            job=self, sync=self.sync, site_name=self.device_site.name if self.device_site else self.apic.location.name
+            job=self, sync=self.sync,
+            site_name=self.device_site.name if self.device_site else self.apic.location.name,
+            controller_tag=self.apic.external_integration.extra_config.get("tag"),
         )
         self.target_adapter.load()
 

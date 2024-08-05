@@ -9,13 +9,13 @@ class Tenant(DiffSyncModel):
 
     _modelname = "tenant"
     _identifiers = ("name",)
-    _attributes = ("description", "comments", "site_tag", "msite_tag")
+    _attributes = ("description", "comments", "controller_tag", "msite_tag")
 
     name: str
     description: Optional[str] = None
     comments: Optional[str] = None
-    site_tag: str
-    msite_tag: bool
+    controller_tag: str
+    msite_tag: Optional[bool]
 
 
 class Vrf(DiffSyncModel):
@@ -23,13 +23,13 @@ class Vrf(DiffSyncModel):
 
     _modelname = "vrf"
     _identifiers = ("name", "tenant")
-    _attributes = ("description", "namespace", "site_tag")
+    _attributes = ("description", "namespace", "controller_tag")
 
     name: str
     tenant: str
     description: Optional[str] = None
     namespace: str
-    site_tag: str
+    controller_tag: str
 
 
 class DeviceType(DiffSyncModel):
@@ -84,7 +84,7 @@ class Device(DiffSyncModel):
         "comments",
         "node_id",
         "pod_id",
-        "site_tag",
+        "controller_tag",
         "controller_group",
     )
     _children = {
@@ -100,7 +100,7 @@ class Device(DiffSyncModel):
     interfaces: List["Interface"] = []
     node_id: Optional[int]
     pod_id: Optional[int]
-    site_tag: str
+    controller_tag: str
     controller_group: str
 
 
@@ -113,14 +113,14 @@ class InterfaceTemplate(DiffSyncModel):
         "name",
         "type",
     )
-    _attributes = ("u_height", "mgmt_only", "site_tag")
+    _attributes = ("u_height", "mgmt_only", "controller_tag")
 
     name: str
     device_type: str
     type: str
     u_height: Optional[int] = None
     mgmt_only: Optional[bool] = None
-    site_tag: str
+    controller_tag: str
 
 
 class IPAddress(DiffSyncModel):
@@ -133,7 +133,7 @@ class IPAddress(DiffSyncModel):
         "namespace",
         "tenant",
     )
-    _attributes = ("prefix", "status", "description", "device", "interface", "site_tag")
+    _attributes = ("prefix", "status", "description", "device", "interface", "controller_tag")
 
     address: str
     prefix: str
@@ -144,7 +144,7 @@ class IPAddress(DiffSyncModel):
     device: Optional[str] = None
     interface: Optional[str] = None
     tenant: Optional[str] = None
-    site_tag: str
+    controller_tag: str
 
 
 class Prefix(DiffSyncModel):
@@ -157,7 +157,7 @@ class Prefix(DiffSyncModel):
         "vrf",
         "tenant",
     )
-    _attributes = ("namespace", "status", "description", "vrf_tenant", "site_tag")
+    _attributes = ("namespace", "status", "description", "vrf_tenant", "controller_tag")
 
     prefix: str
     namespace: str
@@ -167,7 +167,7 @@ class Prefix(DiffSyncModel):
     description: Optional[str]
     vrf: Optional[str]
     vrf_tenant: Optional[str]
-    site_tag: str
+    controller_tag: str
 
 
 class Interface(DiffSyncModel):
@@ -179,7 +179,7 @@ class Interface(DiffSyncModel):
         "device",
         "site",
     )
-    _attributes = ("description", "gbic_sn", "gbic_vendor", "gbic_type", "gbic_model", "state", "type", "site_tag")
+    _attributes = ("description", "gbic_sn", "gbic_vendor", "gbic_type", "gbic_model", "state", "type", "controller_tag")
 
     name: str
     device: str
@@ -191,7 +191,7 @@ class Interface(DiffSyncModel):
     gbic_model: Optional[str]
     state: Optional[str]
     type: str
-    site_tag: str
+    controller_tag: str
 
 
 class ApplicationProfile(DiffSyncModel):
@@ -202,12 +202,12 @@ class ApplicationProfile(DiffSyncModel):
         "name",
         "tenant",
     )
-    _attributes = ("description", "site_tag")
+    _attributes = ("description", "controller_tag")
 
     name: str
     tenant: str
     description: Optional[str]
-    site_tag: str
+    controller_tag: str
 
 
 class BridgeDomain(DiffSyncModel):
@@ -219,14 +219,14 @@ class BridgeDomain(DiffSyncModel):
         "vrf",
         "tenant",
     )
-    _attributes = ("description", "ip_addresses", "site_tag")
+    _attributes = ("description", "ip_addresses", "controller_tag")
 
     name: str
     vrf: Dict
     description: Optional[str]
     tenant: str
     ip_addresses: List[str] = []
-    site_tag: str
+    controller_tag: str
 
 
 class EPG(DiffSyncModel):
@@ -238,14 +238,14 @@ class EPG(DiffSyncModel):
         "application",
         "tenant",
     )
-    _attributes = ("description", "bridge_domain", "site_tag")
+    _attributes = ("description", "bridge_domain", "controller_tag")
 
     name: str
     application: str
     tenant: str
     bridge_domain: str
     description: Optional[str]
-    site_tag: str
+    controller_tag: str
 
 
 class ApplicationTermination(DiffSyncModel):
@@ -257,11 +257,11 @@ class ApplicationTermination(DiffSyncModel):
         "interface",
         "vlan",
     )
-    _attributes = ("name", "description", "site_tag")
+    _attributes = ("name", "description", "controller_tag")
 
     name: Optional[str]
     epg: Dict
     interface: Dict
     vlan: str
     description: Optional[str]
-    site_tag: str
+    controller_tag: str

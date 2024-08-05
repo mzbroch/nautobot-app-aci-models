@@ -4,9 +4,13 @@
 import logging
 import random
 
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 from nautobot.core.signals import nautobot_database_ready
 from nautobot.extras.choices import CustomFieldTypeChoices
 
+from nautobot.dcim.models.devices import Controller
+from nautobot.extras.models import Tag
 from aci_models.ssot.integrations.aci.constant import PLUGIN_CFG
 
 logger = logging.getLogger("nautobot.ssot.aci")
@@ -20,6 +24,16 @@ def register_signals(sender):
     nautobot_database_ready.connect(device_custom_fields, sender=sender)
     nautobot_database_ready.connect(interface_custom_fields, sender=sender)
 
+@receiver(post_save, sender=Controller)
+def controller_created(sender, instance, created, **kwargs):
+    if created and instance.external_integration:
+        extra_config = instance.external_integration.extra_config
+        if "tag" in extra_config.keys():
+            logger.info("Creating tags for ACI, interface status and Sites")
+            Tag.objects.update_or_create(
+                name=extra_config.get("tag"),
+                color=PLUGIN_CFG.get("tag_color"),
+            )           
 
 def aci_create_tag(apps, **kwargs):
     """Add a tag."""

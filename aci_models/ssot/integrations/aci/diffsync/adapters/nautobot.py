@@ -73,7 +73,7 @@ class NautobotAdapter(Adapter):
         "aci_apptermination",
     ]
 
-    def __init__(self, *args, job=None, sync=None, site_name: str, **kwargs):
+    def __init__(self, *args, job=None, sync=None, site_name: str, controller_tag, **kwargs):
         """Initialize Nautobot.
 
         Args:
@@ -85,7 +85,7 @@ class NautobotAdapter(Adapter):
         self.job = job
         self.sync = sync
         self.site = site_name
-        self.site_tag = Tag.objects.get_or_create(name=self.site)[0]
+        self.controller_tag = controller_tag
 
     def sync_complete(self, source: Adapter, *args, **kwargs):
         """Clean up function for DiffSync sync.
@@ -119,25 +119,25 @@ class NautobotAdapter(Adapter):
 
     def load_tenants(self):
         """Method to load Tenants from Nautobot."""
-        for nbtenant in Tenant.objects.filter(tags=self.site_tag):
+        for nbtenant in Tenant.objects.filter(tags__name=self.controller_tag):
             _tenant = self.tenant(
                 name=nbtenant.name,
                 description=nbtenant.description,
                 comments=nbtenant.comments,
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
                 msite_tag=nbtenant.tags.filter(name="ACI_MULTISITE").exists(),
             )
             self.add(_tenant)
 
     def load_vrfs(self):
         """Method to load VRFs from Nautobot."""
-        for nbvrf in VRF.objects.filter(tags=self.site_tag):
+        for nbvrf in VRF.objects.filter(tags__name=self.controller_tag):
             _vrf = self.vrf(
                 name=nbvrf.name,
                 namespace=nbvrf.namespace.name,
                 tenant=nbvrf.tenant.name,
                 description=nbvrf.description if not None else "",
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             self.add(_vrf)
 
@@ -156,19 +156,19 @@ class NautobotAdapter(Adapter):
 
     def load_interfacetemplates(self):
         """Method to load Interface Templates from Nautobot."""
-        for nbinterfacetemplate in InterfaceTemplate.objects.filter(tags=self.site_tag):
+        for nbinterfacetemplate in InterfaceTemplate.objects.filter(tags__name=self.controller_tag):
             _interfacetemplate = self.interface_template(
                 name=nbinterfacetemplate.name,
                 device_type=nbinterfacetemplate.device_type.model,
                 type=nbinterfacetemplate.type,
                 mgmt_only=nbinterfacetemplate.mgmt_only,
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             self.add(_interfacetemplate)
 
     def load_interfaces(self):
         """Method to load Interfaces from Nautobot."""
-        for nbinterface in Interface.objects.filter(tags=self.site_tag):
+        for nbinterface in Interface.objects.filter(tags__name=self.controller_tag):
             if nbinterface.tags.filter(name=PLUGIN_CFG.get("tag_up")).count() > 0:
                 state = PLUGIN_CFG.get("tag_up").lower().replace(" ", "-")
             else:
@@ -184,7 +184,7 @@ class NautobotAdapter(Adapter):
                 gbic_model=nbinterface.custom_field_data.get("gbic_model", ""),
                 state=state,
                 type=nbinterface.type,
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             self.add(_interface)
 
@@ -200,7 +200,7 @@ class NautobotAdapter(Adapter):
 
     def load_devices(self):
         """Method to load Devices from Nautobot."""
-        for nbdevice in Device.objects.filter(tags=self.site_tag):
+        for nbdevice in Device.objects.filter(tags__name=self.controller_tag):
             _device = self.device(
                 name=nbdevice.name,
                 device_type=nbdevice.device_type.model,
@@ -210,7 +210,7 @@ class NautobotAdapter(Adapter):
                 site=nbdevice.location.name,
                 node_id=nbdevice.custom_field_data["aci_node_id"],
                 pod_id=nbdevice.custom_field_data["aci_pod_id"],
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
                 controller_group=(
                     nbdevice.controller_managed_device_group.name if nbdevice.controller_managed_device_group else ""
                 ),
@@ -219,7 +219,7 @@ class NautobotAdapter(Adapter):
 
     def load_ipaddresses(self):
         """Method to load IPAddress objects from Nautobot."""
-        for nbipaddr in IPAddress.objects.filter(tags=self.site_tag):
+        for nbipaddr in IPAddress.objects.filter(tags__name=self.controller_tag):
             if nbipaddr.interfaces.first():
                 intf = nbipaddr.interfaces.first()
                 device_name = intf.parent.name
@@ -241,13 +241,13 @@ class NautobotAdapter(Adapter):
                 device=device_name,
                 interface=interface_name,
                 site=self.site,
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             self.add(_ipaddress)
 
     def load_prefixes(self):
         """Method to load Prefix objects from Nautobot."""
-        for nbprefix in Prefix.objects.filter(tags=self.site_tag):
+        for nbprefix in Prefix.objects.filter(tags__name=self.controller_tag):
             if nbprefix.vrfs.first():
                 vrf = nbprefix.vrfs.first().name
                 if nbprefix.vrfs.first().tenant:
@@ -267,24 +267,24 @@ class NautobotAdapter(Adapter):
                 tenant=nbprefix.tenant.name if nbprefix.tenant else None,
                 vrf=vrf,
                 vrf_tenant=vrf_tenant,
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             self.add(_prefix)
 
     def load_appprofiles(self):
         """Method to load VRFs from Nautobot."""
-        for nbap in ApplicationProfile.objects.filter(tags=self.site_tag):
+        for nbap in ApplicationProfile.objects.filter(tags__name=self.controller_tag):
             _ap = self.aci_appprofile(
                 name=nbap.name,
                 tenant=nbap.tenant.name,
                 description=nbap.description if not None else "",
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             self.add(_ap)
 
     def load_bridgedomains(self):
         """Method to load BDs from Nautobot."""
-        for nbbd in BridgeDomain.objects.filter(tags=self.site_tag):
+        for nbbd in BridgeDomain.objects.filter(tags__name=self.controller_tag):
             ip_addresses = [f"{ip.get('host')}/{ip.get('mask_length')}" for ip in list(nbbd.ip_addresses.values())]
             _bd = self.aci_bridgedomain(
                 name=nbbd.name,
@@ -296,26 +296,26 @@ class NautobotAdapter(Adapter):
                 ip_addresses=sorted(ip_addresses, key=hash),
                 tenant=nbbd.tenant.name,
                 description=nbbd.description if not None else "",
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             self.add(_bd)
 
     def load_epgs(self):
         """Method to load EPGs from Nautobot."""
-        for nbepg in EPG.objects.filter(tags=self.site_tag):
+        for nbepg in EPG.objects.filter(tags__name=self.controller_tag):
             _epg = self.aci_epg(
                 name=nbepg.name,
                 tenant=nbepg.tenant.name,
                 application=nbepg.application.name,
                 bridge_domain=nbepg.bridge_domain.name,
                 description=nbepg.description if not None else "",
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             self.add(_epg)
 
     def load_appterminations(self):
         """Method to load EPG paths from Nautobot."""
-        for nbepgpath in ApplicationTermination.objects.filter(tags=self.site_tag):
+        for nbepgpath in ApplicationTermination.objects.filter(tags__name=self.controller_tag):
             _epgpath = self.aci_apptermination(
                 name=nbepgpath.name,
                 epg={
@@ -329,7 +329,7 @@ class NautobotAdapter(Adapter):
                 },
                 vlan=nbepgpath.vlan.vid,
                 description=nbepgpath.description if not None else "",
-                site_tag=self.site,
+                controller_tag=self.controller_tag,
             )
             self.add(_epgpath)
 
