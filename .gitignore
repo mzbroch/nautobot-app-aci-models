@@ -306,4 +306,4 @@ invoke.yml
 public
 /compose.yaml
 /dump.sql
-/aci_models/static/aci_models/docs
+/nautobot_app_cisco_sdn/static/nautobot_app_cisco_sdn/docs

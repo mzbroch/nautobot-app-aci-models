@@ -21,31 +21,31 @@ Here you will find detailed instructions on how to **install** and **configure**
 ## Install Guide
 
 !!! note
-    Apps can be installed from the [Python Package Index](https://pypi.org/) or locally. See the [Nautobot documentation](https://docs.nautobot.com/projects/core/en/stable/user-guide/administration/installation/app-install/) for more details. The pip package name for this app is [`aci-models`](https://pypi.org/project/aci-models/).
+    Apps can be installed from the [Python Package Index](https://pypi.org/) or locally. See the [Nautobot documentation](https://docs.nautobot.com/projects/core/en/stable/user-guide/administration/installation/app-install/) for more details. The pip package name for this app is [`nautobot-app-cisco-sdn`](https://pypi.org/project/nautobot-app-cisco-sdn/).
 
 The app is available as a Python package via PyPI and can be installed with `pip`:
 
 ```shell
-pip install aci-models
+pip install nautobot-app-cisco-sdn
 ```
 
-To ensure Cisco ACI Models is automatically re-installed during future upgrades, create a file named `local_requirements.txt` (if not already existing) in the Nautobot root directory (alongside `requirements.txt`) and list the `aci-models` package:
+To ensure Cisco ACI Models is automatically re-installed during future upgrades, create a file named `local_requirements.txt` (if not already existing) in the Nautobot root directory (alongside `requirements.txt`) and list the `nautobot-app-cisco-sdn` package:
 
 ```shell
-echo aci-models >> local_requirements.txt
+echo nautobot-app-cisco-sdn >> local_requirements.txt
 ```
 
 Once installed, the app needs to be enabled in your Nautobot configuration. The following block of code below shows the additional configuration required to be added to your `nautobot_config.py` file:
 
-- Append `"aci_models"` to the `PLUGINS` list.
-- Append the `"aci_models"` dictionary to the `PLUGINS_CONFIG` dictionary and override any defaults.
+- Append `"nautobot_app_cisco_sdn"` to the `PLUGINS` list.
+- Append the `"nautobot_app_cisco_sdn"` dictionary to the `PLUGINS_CONFIG` dictionary and override any defaults.
 
 ```python
 # In your nautobot_config.py
-PLUGINS = ["aci_models"]
+PLUGINS = ["nautobot_app_cisco_sdn"]
 
 # PLUGINS_CONFIG = {
-#   "aci_models": {
+#   "nautobot_app_cisco_sdn": {
 #     ADD YOUR SETTINGS HERE
 #   }
 # }

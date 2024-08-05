@@ -23,7 +23,7 @@ services:
       - "8001:8080"
     volumes:
       - "../:/source"
-    image: "aci-models/nautobot:${NAUTOBOT_VER}-py${PYTHON_VER}"
+    image: "nautobot-app-cisco-sdn/nautobot:${NAUTOBOT_VER}-py${PYTHON_VER}"
     healthcheck:
       disable: true
     tty: true

@@ -43,13 +43,13 @@ def is_truthy(arg):
 
 
 # Use pyinvoke configuration for default values, see http://docs.pyinvoke.org/en/stable/concepts/configuration.html
-# Variables may be overwritten in invoke.yml or by the environment variables INVOKE_ACI_MODELS_xxx
-namespace = Collection("aci_models")
+# Variables may be overwritten in invoke.yml or by the environment variables INVOKE_NAUTOBOT_APP_CISCO_SDN_xxx
+namespace = Collection("nautobot_app_cisco_sdn")
 namespace.configure(
     {
-        "aci_models": {
+        "nautobot_app_cisco_sdn": {
             "nautobot_ver": "2.2.7",
-            "project_name": "aci-models",
+            "project_name": "nautobot-app-cisco-sdn",
             "python_ver": "3.11",
             "local": False,
             "compose_dir": os.path.join(os.path.dirname(__file__), "development"),
@@ -66,7 +66,7 @@ namespace.configure(
 
 
 def _is_compose_included(context, name):
-    return f"docker-compose.{name}.yml" in context.aci_models.compose_files
+    return f"docker-compose.{name}.yml" in context.nautobot_app_cisco_sdn.compose_files
 
 
 def _await_healthy_service(context, service):
@@ -118,19 +118,19 @@ def docker_compose(context, command, **kwargs):
     build_env = {
         # Note: 'docker compose logs' will stop following after 60 seconds by default,
         # so we are overriding that by setting this environment variable.
-        "COMPOSE_HTTP_TIMEOUT": context.aci_models.compose_http_timeout,
-        "NAUTOBOT_VER": context.aci_models.nautobot_ver,
-        "PYTHON_VER": context.aci_models.python_ver,
+        "COMPOSE_HTTP_TIMEOUT": context.nautobot_app_cisco_sdn.compose_http_timeout,
+        "NAUTOBOT_VER": context.nautobot_app_cisco_sdn.nautobot_ver,
+        "PYTHON_VER": context.nautobot_app_cisco_sdn.python_ver,
         **kwargs.pop("env", {}),
     }
     compose_command_tokens = [
         "docker compose",
-        f"--project-name {context.aci_models.project_name}",
-        f'--project-directory "{context.aci_models.compose_dir}"',
+        f"--project-name {context.nautobot_app_cisco_sdn.project_name}",
+        f'--project-directory "{context.nautobot_app_cisco_sdn.compose_dir}"',
     ]
 
-    for compose_file in context.aci_models.compose_files:
-        compose_file_path = os.path.join(context.aci_models.compose_dir, compose_file)
+    for compose_file in context.nautobot_app_cisco_sdn.compose_files:
+        compose_file_path = os.path.join(context.nautobot_app_cisco_sdn.compose_dir, compose_file)
         compose_command_tokens.append(f' -f "{compose_file_path}"')
 
     compose_command_tokens.append(command)
@@ -148,7 +148,7 @@ def docker_compose(context, command, **kwargs):
 
 def run_command(context, command, **kwargs):
     """Wrapper to run a command locally or inside the nautobot container."""
-    if is_truthy(context.aci_models.local):
+    if is_truthy(context.nautobot_app_cisco_sdn.local):
         if "command_env" in kwargs:
             kwargs["env"] = {
                 **kwargs.get("env", {}),
@@ -194,7 +194,7 @@ def build(context, force_rm=False, cache=True):
     if force_rm:
         command += " --force-rm"
 
-    print(f"Building Nautobot with Python {context.aci_models.python_ver}...")
+    print(f"Building Nautobot with Python {context.nautobot_app_cisco_sdn.python_ver}...")
     docker_compose(context, command)
 
 
@@ -389,7 +389,7 @@ def createsuperuser(context, user="admin"):
 )
 def makemigrations(context, name=""):
     """Perform makemigrations operation in Django."""
-    command = "nautobot-server makemigrations aci_models"
+    command = "nautobot-server makemigrations nautobot_app_cisco_sdn"
 
     if name:
         command += f" --name {name}"
@@ -607,7 +607,7 @@ def docs(context):
     """Build and serve docs locally for development."""
     command = "mkdocs serve -v"
 
-    if is_truthy(context.aci_models.local):
+    if is_truthy(context.nautobot_app_cisco_sdn.local):
         print(">>> Serving Documentation at http://localhost:8001")
         run_command(context, command)
     else:
@@ -661,7 +661,7 @@ def hadolint(context):
 @task
 def pylint(context):
     """Run pylint code analysis."""
-    command = 'pylint --init-hook "import nautobot; nautobot.setup()" --rcfile pyproject.toml aci_models'
+    command = 'pylint --init-hook "import nautobot; nautobot.setup()" --rcfile pyproject.toml nautobot_app_cisco_sdn'
     run_command(context, command)
 
 
@@ -738,7 +738,7 @@ def check_migrations(context):
 def unittest(  # noqa: PLR0913
     context,
     keepdb=False,
-    label="aci_models",
+    label="nautobot_app_cisco_sdn",
     failfast=False,
     buffer=True,
     pattern="",
@@ -764,7 +764,7 @@ def unittest(  # noqa: PLR0913
 @task
 def unittest_coverage(context):
     """Report on code test coverage as measured by 'invoke unittest'."""
-    command = "coverage report --skip-covered --include 'aci_models/*' --omit *migrations*"
+    command = "coverage report --skip-covered --include 'nautobot_app_cisco_sdn/*' --omit *migrations*"
 
     run_command(context, command)
 
@@ -779,7 +779,7 @@ def unittest_coverage(context):
 def tests(context, failfast=False, keepdb=False, lint_only=False):
     """Run all tests for this app."""
     # If we are not running locally, start the docker containers so we don't have to for each test
-    if not is_truthy(context.aci_models.local):
+    if not is_truthy(context.nautobot_app_cisco_sdn.local):
         print("Starting Docker Containers...")
         start(context)
     # Sorted loosely from fastest to slowest

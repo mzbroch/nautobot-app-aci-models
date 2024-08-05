@@ -127,32 +127,32 @@ if not _TESTING:
 #
 
 # Enable installed Apps. Add the name of each App to the list.
-PLUGINS = ["nautobot_ssot", "aci_models"]
+PLUGINS = ["nautobot_ssot", "nautobot_app_cisco_sdn"]
 
 # Apps configuration settings. These settings are used by various Apps that the user may have installed.
 # Each key in the dictionary is the name of an installed App and its value is a dictionary of settings.
 
 PLUGINS_CONFIG = {
-    "aci_models": {
+    "nautobot_app_cisco_sdn": {
         # URL and credentials should be configured as environment variables on the host system
         # Tag which will be created and applied to all synchronized objects.
-        "aci_tag": os.getenv("ACI_MODELS_ACI_TAG"),
-        "aci_tag_color": os.getenv("ACI_MODELS_ACI_TAG_COLOR"),
+        "aci_tag": os.getenv("NAUTOBOT_APP_CISCO_SDN_ACI_TAG"),
+        "aci_tag_color": os.getenv("NAUTOBOT_APP_CISCO_SDN_ACI_TAG_COLOR"),
         # Tags indicating state applied to synchronized interfaces.
-        "aci_tag_up": os.getenv("ACI_MODELS_ACI_TAG_UP"),
-        "aci_tag_up_color": os.getenv("ACI_MODELS_ACI_TAG_UP_COLOR"),
-        "aci_tag_down": os.getenv("ACI_MODELS_ACI_TAG_DOWN"),
-        "aci_tag_down_color": os.getenv("ACI_MODELS_ACI_TAG_DOWN_COLOR"),
+        "aci_tag_up": os.getenv("NAUTOBOT_APP_CISCO_SDN_ACI_TAG_UP"),
+        "aci_tag_up_color": os.getenv("NAUTOBOT_APP_CISCO_SDN_ACI_TAG_UP_COLOR"),
+        "aci_tag_down": os.getenv("NAUTOBOT_APP_CISCO_SDN_ACI_TAG_DOWN"),
+        "aci_tag_down_color": os.getenv("NAUTOBOT_APP_CISCO_SDN_ACI_TAG_DOWN_COLOR"),
         # Manufacturer name. Specify existing, or a new one with this name will be created.
-        "aci_manufacturer_name": os.getenv("ACI_MODELS_ACI_MANUFACTURER_NAME"),
+        "aci_manufacturer_name": os.getenv("NAUTOBOT_APP_CISCO_SDN_ACI_MANUFACTURER_NAME"),
         # Exclude any tenants you would not like to bring over from ACI.
-        "aci_ignore_tenants": os.getenv("ACI_MODELS_ACI_IGNORE_TENANTS", "").split(","),
+        "aci_ignore_tenants": os.getenv("NAUTOBOT_APP_CISCO_SDN_ACI_IGNORE_TENANTS", "").split(","),
         # The below value will appear in the Comments field on objects created in Nautobot
-        "aci_comments": os.getenv("ACI_MODELS_ACI_COMMENTS"),
+        "aci_comments": os.getenv("NAUTOBOT_APP_CISCO_SDN_ACI_COMMENTS"),
         # Site to associate objects. Specify existing, or a new site with this name will be created.
         # "aci_site": os.getenv("NAUTOBOT_SSOT_ACI_SITE"),
-        "enable_aci": is_truthy(os.getenv("ACI_MODELS_ENABLE_ACI", "false")),
-        "hide_example_jobs": is_truthy(os.getenv("ACI_MODELS_HIDE_EXAMPLE_JOBS", "true")),
+        "enable_aci": is_truthy(os.getenv("NAUTOBOT_APP_CISCO_SDN_ENABLE_ACI", "false")),
+        "hide_example_jobs": is_truthy(os.getenv("NAUTOBOT_APP_CISCO_SDN_HIDE_EXAMPLE_JOBS", "true")),
     },
     "nautobot_ssot": {
         # URL and credentials should be configured as environment variables on the host system

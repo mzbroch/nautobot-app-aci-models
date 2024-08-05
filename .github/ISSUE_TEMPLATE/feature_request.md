@@ -6,7 +6,7 @@ about: Propose a new feature or enhancement
 
 ### Environment
 * Nautobot version:  <!-- Example: 2.0.0 -->
-* aci-models version:  <!-- Example: 1.0.0 -->
+* nautobot-app-cisco-sdn version:  <!-- Example: 1.0.0 -->
 
 <!--
     Describe in detail the new functionality you are proposing.

@@ -9,5 +9,5 @@ jobs:
   upstream-test:
     uses: "nautobot/nautobot/.github/workflows/plugin_upstream_testing_base.yml@develop"
     with:  # Below could potentially be collapsed into a single argument if a concrete relationship between both is enforced
-      invoke_context_name: "ACI_MODELS"
-      plugin_name: "nautobot-app-aci-models"
+      invoke_context_name: "NAUTOBOT_APP_CISCO_SDN"
+      plugin_name: "nautobot-app-nautobot-app-cisco-sdn"

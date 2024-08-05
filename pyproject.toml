@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "aci-models"
-version = "0.2.0"
-description = "Cisco ACI Models"
+name = "nautobot-app-cisco-sdn"
+version = "0.3.0"
+description = "Cisco SDN Models and SSOT"
 authors = ["Network to Code, LLC <info@networktocode.com>"]
 license = "Apache-2.0"
 readme = "README.md"
-homepage = "https://github.com/nautobot/nautobot-app-aci-models"
-repository = "https://github.com/nautobot/nautobot-app-aci-models"
-documentation = "https://docs.nautobot.com/projects/aci-models/en/latest/"
+homepage = "https://github.com/nautobot/nautobot-app-nautobot-app-cisco-sdn"
+repository = "https://github.com/nautobot/nautobot-app-nautobot-app-cisco-sdn"
+documentation = "https://docs.nautobot.com/projects/nautobot-app-cisco-sdn/en/latest/"
 keywords = ["nautobot", "nautobot-app", "nautobot-plugin"]
 classifiers = [
     "Intended Audience :: Developers",
@@ -19,11 +19,11 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 packages = [
-    { include = "aci_models" },
+    { include = "nautobot_app_cisco_sdn" },
 ]
 include = [
     # Poetry by default will exclude files that are in .gitignore
-    "aci_models/static/aci_models/docs/**/*",
+    "nautobot_app_cisco_sdn/static/nautobot_app_cisco_sdn/docs/**/*",
 ]
 
 [tool.poetry.dependencies]
@@ -126,10 +126,10 @@ ignore = [
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"aci_models/migrations/*" = [
+"nautobot_app_cisco_sdn/migrations/*" = [
     "D",
 ]
-"aci_models/tests/*" = [
+"nautobot_app_cisco_sdn/tests/*" = [
     "D",
     "S"
 ]
@@ -139,12 +139,12 @@ requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.towncrier]
-package = "aci_models"
+package = "nautobot_app_cisco_sdn"
 directory = "changes"
 filename = "docs/admin/release_notes/version_X.Y.md"
 template = "development/towncrier_template.j2"
 start_string = "<!-- towncrier release notes start -->"
-issue_format = "[#{issue}](https://github.com/nautobot/nautobot-app-aci-models/issues/{issue})"
+issue_format = "[#{issue}](https://github.com/nautobot/nautobot-app-nautobot-app-cisco-sdn/issues/{issue})"
 
 [[tool.towncrier.type]]
 directory = "security"
