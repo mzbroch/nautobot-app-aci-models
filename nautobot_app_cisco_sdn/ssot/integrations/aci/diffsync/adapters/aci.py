@@ -479,7 +479,7 @@ class AciAdapter(Adapter):
                         self.job.logger.info(msg=f"Loading Application Profile from APIC {new_ap}")
                     self.add(new_ap)
 
-    def load_bridgedomains(self):  # noqa: PLR0912
+    def load_bridgedomains(self):  # noqa: PLR0912 # pylint: disable=R0912
         """Load Bridge domains from ACI."""
         bd_dict = self.conn.get_bds(tenant="all")
         # pylint: disable-next=too-many-nested-blocks
@@ -504,7 +504,7 @@ class AciAdapter(Adapter):
                     ip_addresses = sorted([subnet[0] for subnet in bd_value.get("subnets")], key=hash)
                 else:
                     ip_addresses = []
-                if not bd_value["vrf"] or (bd_value["vrf"] and not vrf_tenant):
+                if not bd_value["vrf"] or (bd_value["vrf"] and not vrf_tenant):  # pylint: disable=R1724
                     self.job.logger.warning(
                         f"VRF configured on Bridge Domain {bd_value['name']} in tenant {tenant_name} is invalid. Skipping...",
                     )

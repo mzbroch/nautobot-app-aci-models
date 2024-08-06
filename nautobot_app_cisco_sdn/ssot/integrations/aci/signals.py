@@ -23,7 +23,7 @@ def register_signals(sender):
     nautobot_database_ready.connect(interface_custom_fields, sender=sender)
 
 @receiver(post_save, sender=Controller)
-def controller_created(sender, instance, created, **kwargs):
+def controller_created(sender, instance, created, **kwargs):  # pylint: disable=W0613
     """Function controller_created adds ctag with every new controller.
 
     Args:

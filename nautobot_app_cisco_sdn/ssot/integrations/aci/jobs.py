@@ -44,7 +44,7 @@ class AciDataSource(DataSource, Job):  # pylint: disable=abstract-method, too-ma
         data_source_icon = static("nautobot_ssot_aci/aci.png")
         description = "Sync information from ACI to Nautobot"
 
-    def __init__(self):
+    def __init__(self):  # pylint: disable=W0246
         """Initialize ExampleYAMLDataSource."""
         super().__init__()
         # self.diffsync_flags = (self.diffsync_flags,)

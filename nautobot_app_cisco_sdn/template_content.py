@@ -4,7 +4,7 @@ from django.urls import reverse
 from nautobot.apps.ui import TemplateExtension
 
 
-class DeviceContent(TemplateExtension):
+class DeviceContent(TemplateExtension):  # pylint: disable=W0223
     """_summary_.
 
     Args:

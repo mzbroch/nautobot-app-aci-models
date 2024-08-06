@@ -3,7 +3,7 @@ from importlib.util import find_spec
 
 from django.conf import settings
 
-aci_models = "nautobot_app_cisco_sdn.models"
+ACI_MODELS_MODULE = "nautobot_app_cisco_sdn.models"
 
 def module_exists(module: str) -> bool:
     """_summary_.
@@ -30,6 +30,6 @@ def _read_settings() -> dict:
     return {key[4:]: value for key, value in config.items() if key.startswith("aci_")}
 
 # Check if Nautobot ACI models exist
-HAS_NAUTOBOT_APP_CISCO_SDN = module_exists(aci_models)
+HAS_NAUTOBOT_APP_CISCO_SDN = module_exists(ACI_MODELS_MODULE)
 # Import config vars from nautobot_config.py
 PLUGIN_CFG = _read_settings()

@@ -77,7 +77,7 @@ class NautobotAdapter(Adapter):
         "aci_apptermination",
     ]
 
-    def __init__(self, *args, job=None, sync=None, site_name: str, site_type: str, controller_tag: str, **kwargs):  # noqa: PLR0913
+    def __init__(self, *args, job=None, sync=None, site_name: str, site_type: str, controller_tag: str, **kwargs):  # noqa: PLR0913 # pylint: disable=R0913
         """Initialize Nautobot.
 
         Args:
@@ -284,7 +284,7 @@ class NautobotAdapter(Adapter):
 
     def load_appprofiles(self):
         """Method to load VRFs from Nautobot."""
-        for nbap in ApplicationProfile.objects.filter(tags__name=self.controller_tag):
+        for nbap in ApplicationProfile.objects.filter(tags__name=self.controller_tag):  # pylint: disable=E0606
             _ap = self.aci_appprofile(
                 name=nbap.name,
                 tenant=nbap.tenant.name,
@@ -295,7 +295,7 @@ class NautobotAdapter(Adapter):
 
     def load_bridgedomains(self):
         """Method to load BDs from Nautobot."""
-        for nbbd in BridgeDomain.objects.filter(tags__name=self.controller_tag):
+        for nbbd in BridgeDomain.objects.filter(tags__name=self.controller_tag):  # pylint: disable=E0606
             ip_addresses = [f"{ip.get('host')}/{ip.get('mask_length')}" for ip in list(nbbd.ip_addresses.values())]
             _bd = self.aci_bridgedomain(
                 name=nbbd.name,
@@ -313,7 +313,7 @@ class NautobotAdapter(Adapter):
 
     def load_epgs(self):
         """Method to load EPGs from Nautobot."""
-        for nbepg in EPG.objects.filter(tags__name=self.controller_tag):
+        for nbepg in EPG.objects.filter(tags__name=self.controller_tag):  # pylint: disable=E0606
             _epg = self.aci_epg(
                 name=nbepg.name,
                 tenant=nbepg.tenant.name,
@@ -326,7 +326,7 @@ class NautobotAdapter(Adapter):
 
     def load_appterminations(self):
         """Method to load EPG paths from Nautobot."""
-        for nbepgpath in ApplicationTermination.objects.filter(tags__name=self.controller_tag):
+        for nbepgpath in ApplicationTermination.objects.filter(tags__name=self.controller_tag):  # pylint: disable=E0606
             _epgpath = self.aci_apptermination(
                 name=nbepgpath.name,
                 epg={

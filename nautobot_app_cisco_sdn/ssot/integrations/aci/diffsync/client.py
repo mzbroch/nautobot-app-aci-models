@@ -598,6 +598,7 @@ class AciApi:
         return self._handle_error(resp)
 
     def _solve_port_blocks(self, portblk: dict) -> list:
+        """Solves a list of portblocks and returns valid ports."""
         from_card, from_port = (
             portblk["infraPortBlk"]["attributes"]["fromCard"],
             portblk["infraPortBlk"]["attributes"]["fromPort"],
@@ -606,9 +607,9 @@ class AciApi:
             portblk["infraPortBlk"]["attributes"]["toCard"],
             portblk["infraPortBlk"]["attributes"]["toPort"],
         )
-        if from_card != to_card:
+        if from_card != to_card:  # pylint: disable=R1705
             logger.warning(msg="Chassis Port Blocks not supported!!!!")
-            return
+            return None
         elif from_port == to_port:
             return [f"Ethernet{to_card}/{to_port}"]
         else:

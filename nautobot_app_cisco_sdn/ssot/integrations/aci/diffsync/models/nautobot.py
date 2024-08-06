@@ -574,7 +574,7 @@ class NautobotApplicationProfile(ApplicationProfile):
     def create(cls, adapter, ids, attrs):
         """Create AP object in Nautobot."""
         _tenant = OrmTenant.objects.get(name=ids["tenant"])
-        _appprofile = OrmApplicationProfile(name=ids["name"], tenant=_tenant, description=attrs["description"])
+        _appprofile = OrmApplicationProfile(name=ids["name"], tenant=_tenant, description=attrs["description"])  # pylint: disable=E0606
         sor_tag, controller_tag = (
             Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
             Tag.objects.get(name=attrs["controller_tag"]),
@@ -624,18 +624,18 @@ class NautobotBridgeDomain(BridgeDomain):
             adapter.job.logger.warning(
                 msg=f"Cannot create BD: {ids['name']} - Tenant: {ids['vrf']['vrf_tenant']} does not exist."
             )
-            return
+            return None
         except OrmVrf.DoesNotExist:
             adapter.job.logger.warning(
                 msg=f"Cannot create BD: {ids['name']} - VRF: {ids['vrf']['name']} does not exist."
             )
-            return
+            return None
         except Namespace.DoesNotExist:
             adapter.job.logger.warning(
                 msg=f"Cannot create BD: {ids['name']} - Namespace: {ids['vrf']['namespace']} does not exist."
             )
-            return
-        _bd = OrmBridgeDomain(
+            return None
+        _bd = OrmBridgeDomain(  # pylint: disable=E0606
             name=ids["name"],
             tenant=_tenant,
             vrf=_vrf,
@@ -683,10 +683,10 @@ class NautobotBridgeDomain(BridgeDomain):
             self.adapter.job.logger.warning(
                 msg=f"Cannot update BD: {self.name} - VRF: {self.vrf['name']} does not exist."
             )
-            return
+            return None
         except OrmBridgeDomain.DoesNotExist:
             self.adapter.job.logger.warning(msg=f"Cannot update BD: {self.name} - BD does not exist.")
-            return
+            return None
         if attrs.get("description"):
             _bd.description = attrs["description"]
         if attrs.get("ip_addresses"):
@@ -748,25 +748,25 @@ class NautobotEPG(EPG):
             adapter.job.logger.warning(
                 msg=f"Cannot create EPG: {ids['name']} - App Profile: {ids['application']} does not exist in Tenant {ids['tenant']}."
             )
-            return
+            return None
         except OrmBridgeDomain.DoesNotExist:
             adapter.job.logger.warning(
                 msg=f"Cannot create EPG: {ids['name']} - BD: {attrs['bridge_domain']} does not exist in Tenant {ids['tenant']}."
             )
-            return
+            return None
         except OrmBridgeDomain.MultipleObjectsReturned:
             adapter.job.logger.warning(
                 msg=f"Cannot create EPG: {ids['name']} - BD: {attrs['bridge_domain']} has duplicates in Tenant: {ids['tenant']}."
             )
-            return
+            return None
         except OrmTenant.DoesNotExist:
             adapter.job.logger.warning(
                 msg=f"Cannot create EPG: {ids['name']} - Tenant: {ids['tenant']} does not exist."
             )
-            return
+            return None
         if adapter.job.debug:
             adapter.job.logger.debug(msg=f"Creating EPG: {ids['name']} in APP Profile: {ids['application']}")
-        _epg = OrmEPG(
+        _epg = OrmEPG(  # pylint: disable=E0606
             name=ids["name"],
             tenant=_tenant,
             application=_appprofile,
@@ -792,12 +792,12 @@ class NautobotEPG(EPG):
             self.adapter.job.logger.warning(
                 msg=f"Cannot Update EPG: {self.name} - Tenant: {self.tenant} does not exist."
             )
-            return
+            return None
         except OrmApplicationProfile.DoesNotExist:
             self.adapter.job.logger.warning(
                 msg=f"Cannot Update EPG: {self.name} - App Profile: {self.application} does not exist in Tenant {self.tenant}."
             )
-            return
+            return None
         if attrs.get("description"):
             _epg.description = attrs["description"]
         if attrs.get("bridge_domain"):
@@ -811,12 +811,12 @@ class NautobotEPG(EPG):
                 self.adapter.job.logger.warning(
                     msg=f"Cannot Update EPG: {self.name} - BD: {attrs['bridge_domain']} does not exist in Tenant {self.tenant}."
                 )
-                return
+                return None
             except OrmBridgeDomain.MultipleObjectsReturned:
                 self.adapter.job.logger.warning(
                     msg=f"Cannot Update EPG: {self.name} - Multiple BD: {attrs['bridge_domain']} in Tenant {self.tenant}."
                 )
-                return
+                return None
             _epg.bridge_domain = _bd
         _epg.validated_save()
         if self.adapter.job.debug:
@@ -840,7 +840,7 @@ class NautobotApplicationTermination(ApplicationTermination):
     """Nautobot implementation of the EPG Path Model."""
 
     @classmethod
-    def create(cls, adapter, ids, attrs):
+    def create(cls, adapter, ids, attrs):  # pylint: disable=R0914
         """Create EPG Path object in Nautobot."""
         try:
             _epg = OrmEPG.objects.get(
@@ -856,12 +856,12 @@ class NautobotApplicationTermination(ApplicationTermination):
             adapter.job.logger.warning(
                 msg=f"Cannot create Path: {ids['interface']['device']}:{ids['interface']['name']}:{ids['vlan']}. EPG {ids['epg']['name']} does not exist."
             )
-            return
+            return None
         except OrmInterface.DoesNotExist:
             adapter.job.logger.warning(
                 msg=f"Cannot create Path: {ids['interface']['device']}:{ids['interface']['name']}:{ids['vlan']}. Interface does not exist."
             )
-            return
+            return None
         sor_tag, controller_tag = (
             Tag.objects.get(name=PLUGIN_CFG.get("tag", "")),
             Tag.objects.get(name=attrs["controller_tag"]),
@@ -884,7 +884,7 @@ class NautobotApplicationTermination(ApplicationTermination):
                 msg=f"Created VLAN: {_vlan_id} for EPG Path: {_interface.device.name}:{_interface.name}:{_vlan_id}"
             )
         _path_name = f"{_interface.device.name}:{_interface.name}:{_vlan_id}"
-        _epgpath = OrmApplicationTermination(
+        _epgpath = OrmApplicationTermination(  # pylint: disable=E0606
             name=_path_name,
             epg=_epg,
             interface=_interface,
@@ -920,17 +920,17 @@ class NautobotApplicationTermination(ApplicationTermination):
             self.adapter.job.logger.warning(
                 msg=f"Cannot Update Path: {_interface.device.name}:{_interface.name}:{self.vlan}. EPG {self.epg['name']} does not exist."
             )
-            return
+            return None
         except OrmInterface.DoesNotExist:
             self.adapter.job.logger.warning(
                 msg=f"Cannot Update Path: {_interface.device.name}:{_interface.name}:{self.vlan}. Interface does not exist."
             )
-            return
+            return None
         except VLAN.DoesNotExist:
             self.adapter.job.logger.warning(
                 msg=f"Cannot Update Path: {_interface.device.name}:{_interface.name}:{self.vlan}. VLAN {self.vlan} does not exist."
             )
-            return
+            return None
 
         _epgpath = OrmApplicationTermination.objects.get(
             name=self.name,
