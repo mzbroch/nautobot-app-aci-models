@@ -872,7 +872,7 @@ class NautobotApplicationTermination(ApplicationTermination):
         _vlan_name = f"{_epg.application.name}_{_epg.name}_{_vlan_id}"
         _vlan, _created = VLAN.objects.get_or_create(
             vid=_vlan_id,
-            location=Location.objects.get(name=_interface.device.location),
+            location=Location.objects.get(name=_interface.device.location, location_type__name=adapter.site_type),
             name=_vlan_name,
             status=Status.objects.get(name="Active"),
         )
