@@ -11,6 +11,13 @@ APPTERM_LINK = """
     {{ record.name|default:'<span class="label label-info">Unnamed App. Term.</span>' }}
 </a>
 """
+BD_IPADDRESS_LINK = """
+{% for ipaddress in record.ip_addresses.all %}
+    <a href="{% url 'ipam:ipaddress' pk=ipaddress.pk %}">{{ ipaddress }}</a>{% if not forloop.last %}<br />{% endif %}
+{% empty %}
+    &mdash;
+{% endfor %}
+"""
 
 
 class ApplicationProfileTable(BaseTable):
@@ -40,11 +47,19 @@ class ApplicationProfileTable(BaseTable):
 class BridgeDomainTable(BaseTable):
     # pylint: disable=R0903
     """Table for BridgeDomain list view."""
-
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
     tenant = TenantColumn()
-    vrf = tables.Column(verbose_name="VRF", linkify=lambda record: record.vrf.get_absolute_url(), accessor="vrf.name")
+    vrf = tables.Column(
+        verbose_name="VRF",
+        linkify=lambda record: record.vrf.get_absolute_url(),
+        accessor="vrf.name",
+    )
+    ip_addresses = tables.TemplateColumn(
+        template_code=BD_IPADDRESS_LINK,
+        orderable=False,
+        verbose_name="IP Addresses",
+    )
     actions = ButtonsColumn(
         models.BridgeDomain,
         pk_field="pk",
