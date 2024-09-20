@@ -1,6 +1,6 @@
 ---
-aci_models:
-  project_name: "aci-models"
+nautobot_app_cisco_sdn:
+  project_name: "nautobot-app-cisco-sdn"
   nautobot_ver: "2.0.0"
   local: false
   python_ver: "3.11"

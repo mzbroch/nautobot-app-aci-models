@@ -1,10 +1,10 @@
 ---
 dev_addr: "127.0.0.1:8001"
-edit_uri: "edit/main/nautobot-app-aci-models/docs"
-site_dir: "aci_models/static/aci_models/docs"
+edit_uri: "edit/main/nautobot-app-nautobot-app-cisco-sdn/docs"
+site_dir: "nautobot_app_cisco_sdn/static/nautobot_app_cisco_sdn/docs"
 site_name: "Cisco ACI Models Documentation"
-site_url: "https://docs.nautobot.com/projects/aci-models/en/latest/"
-repo_url: "https://github.com/nautobot/nautobot-app-aci-models"
+site_url: "https://docs.nautobot.com/projects/nautobot-app-cisco-sdn/en/latest/"
+repo_url: "https://github.com/nautobot/nautobot-app-nautobot-app-cisco-sdn"
 copyright: "Copyright &copy; The Authors"
 theme:
   name: "material"

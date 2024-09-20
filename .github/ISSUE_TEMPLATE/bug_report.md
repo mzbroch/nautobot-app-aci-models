@@ -1,12 +1,12 @@
 ---
 name: 🐛 Bug Report
-about: Report a reproducible bug in the current release of aci-models
+about: Report a reproducible bug in the current release of nautobot-app-cisco-sdn
 ---
 
 ### Environment
 * Python version:  <!-- Example: 3.11.4 -->
 * Nautobot version:  <!-- Example: 2.0.0 -->
-* aci-models version:  <!-- Example: 1.0.0 -->
+* nautobot-app-cisco-sdn version:  <!-- Example: 1.0.0 -->
 
 <!-- What did you expect to happen? -->
 ### Expected Behavior
