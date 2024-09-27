@@ -174,6 +174,7 @@ PLUGINS_CONFIG = {
         # Site to associate objects. Specify existing, or a new site with this name will be created.
         # "aci_site": os.getenv("NAUTOBOT_SSOT_ACI_SITE"),
         "enable_aci": is_truthy(os.getenv("NAUTOBOT_SSOT_ENABLE_ACI", "false")),
+        "enable_infoblox": is_truthy(os.getenv("NAUTOBOT_SSOT_ENABLE_ACI", "true")),
         "hide_example_jobs": is_truthy(os.getenv("NAUTOBOT_SSOT_HIDE_EXAMPLE_JOBS", "true")),
     },
 }
