@@ -31,7 +31,8 @@ python = ">=3.8,<3.12"
 # Used for local development
 nautobot = "2.2.7"
 diffsync = "^2.0.0"
-nautobot-ssot = { git = "https://github.com/nautobot/nautobot-app-ssot.git", rev = "7bc5db8c7e2abaacc2c1d064e687298f3b80c0c2" }
+# nautobot-ssot = { git = "https://github.com/nautobot/nautobot-app-ssot.git", rev = "7bc5db8c7e2abaacc2c1d064e687298f3b80c0c2" }
+nautobot-ssot = "^3.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
